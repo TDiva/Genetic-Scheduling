@@ -1,0 +1,31 @@
+package core.selection;
+
+import java.util.Collections;
+import java.util.Comparator;
+
+import core.Population;
+import core.chromosomes.BaseChromosome;
+import core.makespan.MakespanManager;
+
+public class EliteSelection implements SelectionManager {
+
+	private MakespanManager makespanManager;
+
+	public EliteSelection(MakespanManager manager) {
+		makespanManager = manager;
+	}
+
+	@Override
+	public Population selection(Population p, int size) {
+		Collections.sort(p.getIndividuals(), new Comparator<BaseChromosome>() {
+
+			public int compare(BaseChromosome c1, BaseChromosome c2) {
+				return makespanManager.makespan(c1)
+						- makespanManager.makespan(c2);
+			}
+		});
+
+		return new Population(p.getIndividuals().subList(0, size));
+	}
+
+}
