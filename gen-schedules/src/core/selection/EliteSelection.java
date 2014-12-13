@@ -11,8 +11,8 @@ public class EliteSelection implements SelectionManager {
 
 	private MakespanManager makespanManager;
 
-	public EliteSelection(MakespanManager manager) {
-		makespanManager = manager;
+	public EliteSelection(MakespanManager makespanManager) {
+		this.makespanManager = makespanManager;
 	}
 
 	@Override

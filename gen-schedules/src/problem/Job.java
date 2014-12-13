@@ -97,6 +97,9 @@ public class Job {
 	}
 
 	public int getFreeTime() {
+		if (processed.isEmpty()) {
+			return 0;
+		}
 		int lastStart = Collections.max(processed.keySet());
 		int index = processed.get(lastStart);
 		int length = operations.get(index);

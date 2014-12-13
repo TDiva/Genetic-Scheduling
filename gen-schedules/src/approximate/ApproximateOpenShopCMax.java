@@ -8,7 +8,7 @@ import problem.Machine;
 import problem.Problem;
 import problem.Schedule;
 
-public class ApproximateAlgorythm {
+public class ApproximateOpenShopCMax {
 
 	private Problem problem;
 
@@ -16,11 +16,8 @@ public class ApproximateAlgorythm {
 		return m.completedJobs() == problem.getNumberOfJobs();
 	}
 
-	public ApproximateAlgorythm(Problem p) {
+	public Schedule generateSchedule(Problem p) {
 		problem = p;
-	}
-
-	public Schedule generateSchedule() {
 		Schedule schedule = new Schedule(problem);
 
 		PriorityQueue<Machine> queue = new PriorityQueue<Machine>(
@@ -33,9 +30,7 @@ public class ApproximateAlgorythm {
 
 				});
 
-		for (int i = 0; i < problem.getNumberOfMachines(); i++) {
-			queue.add(new Machine(i + 1));
-		}
+		queue.addAll(schedule.getMachines());
 
 		while (!queue.isEmpty()) {
 			Machine m = queue.remove();

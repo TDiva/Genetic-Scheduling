@@ -18,7 +18,7 @@ public class CrossoverWheel implements ParentingManager {
 	
 	private Random random = new Random();
 	
-	public CrossoverWheel(Population population) {
+	public CrossoverWheel() {
         size = 0;
 		wheel = new TreeMap<Integer,BaseChromosome>();	
 	}
