@@ -30,6 +30,10 @@ public class Problem {
     public int getNumberOfJobs() {
         return numberOfJobs;
     }
+    
+    public int[][] getOperations() {
+    	return operations;
+    }
 
     public int getOperation(int job, int machine) {
         return operations[job][machine];

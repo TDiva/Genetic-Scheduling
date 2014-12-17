@@ -38,6 +38,8 @@ public class ApproximateOpenShopCMax {
 				Job j = findFreeJob(schedule, m);
 				if (j != null) {
 					schedule.schedule(m.getIndex(), j.getIndex());
+				} else {
+					System.out.println("!!!");
 				}
 				queue.add(m);
 			}

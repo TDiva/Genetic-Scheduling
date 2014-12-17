@@ -15,7 +15,7 @@ import core.crossover.selection.ParentingManager;
 public class RandomCrossover implements CrossoverManager {
 
 	private ParentingManager parentingManager;
-	
+
 	private Random r = new Random(System.currentTimeMillis());
 
 	private int getMask(int length) {
@@ -26,7 +26,7 @@ public class RandomCrossover implements CrossoverManager {
 		}
 		return mask;
 	}
-	
+
 	public RandomCrossover(ParentingManager manager) {
 		parentingManager = manager;
 	}
@@ -81,8 +81,7 @@ public class RandomCrossover implements CrossoverManager {
 
 	@Override
 	public Population crossover(Population p) {
-		List<BaseChromosome> newIndividuals = new ArrayList<>(
-				p.getIndividuals());
+		List<BaseChromosome> newIndividuals = new ArrayList<>();
 		parentingManager.assignPopulation(p);
 		int iterations = p.getIndividuals().size() / 2;
 		for (int i = 0; i < iterations; i++) {
