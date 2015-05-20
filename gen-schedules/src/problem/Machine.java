@@ -29,7 +29,7 @@ public class Machine {
 	public Map<Integer, Job> getSchedule() {
 		return schedule;
 	}
-	
+
 	public int completedJobs() {
 		return schedule.size();
 	}
@@ -41,7 +41,7 @@ public class Machine {
 	public void addJob(Job job) {
 		int length = job.getOperationLength(index);
 		if (length == 0) {
-			job.processOperation(index, 0);
+			return;
 		}
 		int endTime = 0;
 		for (int startTime : schedule.keySet()) {
@@ -67,8 +67,8 @@ public class Machine {
 		for (Integer startTime : schedule.keySet()) {
 			sb.append(startTime);
 			sb.append(": ");
-			sb.append(schedule.get(sb).getIndex());
-			sb.append("; ");
+			sb.append(schedule.get(startTime).getIndex());
+			sb.append(";\t");
 		}
 		return sb.toString();
 	}

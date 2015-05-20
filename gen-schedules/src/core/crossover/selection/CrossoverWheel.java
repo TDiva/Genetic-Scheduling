@@ -9,41 +9,41 @@ import core.chromosomes.BaseChromosome;
 
 public class CrossoverWheel implements ParentingManager {
 
-	/* 
-	 * Key: Right side of range
-	 * Value: BaseChromosome parent
-	 * */
+	/*
+	 * Key: Right side of range Value: BaseChromosome parent
+	 */
 	private Map<Integer, BaseChromosome> wheel;
 	private int size;
-	
+
 	private Random random = new Random();
-	
+
 	public CrossoverWheel() {
-        size = 0;
-		wheel = new TreeMap<Integer,BaseChromosome>();	
+		size = 0;
+		wheel = new TreeMap<Integer, BaseChromosome>();
 	}
-	
+
 	public void assignPopulation(Population population) {
 		size = 0;
-		wheel = new TreeMap<Integer,BaseChromosome>();
-		for (BaseChromosome chromosome: population.getIndividuals()) {
+		wheel = new TreeMap<Integer, BaseChromosome>();
+		for (BaseChromosome chromosome : population.getIndividuals()) {
 			size++;
-			//TODO: add criteria of quality
-//			size+=BaseChromosome.getValue();
-			wheel.put(size,chromosome);
+			// TODO: add criteria of quality
+			// size+=BaseChromosome.getValue();
+			wheel.put(size, chromosome);
 		}
 	}
 
-    @Override
+	@Override
 	public BaseChromosome getParent() {
-    	if (size == 0) return null;
+		if (size == 0)
+			return null;
 		int key = random.nextInt(size);
-		for (Integer sector: wheel.keySet()) {
-            if (sector >= key) {
-                return wheel.get(sector);
-            }
-        }
-        return null;
+		for (Integer sector : wheel.keySet()) {
+			if (sector >= key) {
+				return wheel.get(sector);
+			}
+		}
+		return null;
 	}
-	
+
 }

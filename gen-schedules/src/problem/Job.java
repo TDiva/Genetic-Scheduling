@@ -51,8 +51,8 @@ public class Job {
 		Arrays.fill(buf, true);
 		for (int left : processed.keySet()) {
 			int right = left + operations.get(processed.get(left));
-			if (left <= startTime && right >= endTime)
-				return -1;
+			// if (left <= startTime && right >= endTime)
+			// return -1;
 			if (left >= startTime && left < endTime) {
 				Arrays.fill(buf, left - startTime, right > endTime ? endTime
 						- startTime : right - startTime, false);
@@ -64,14 +64,13 @@ public class Job {
 		}
 		int sum = 0;
 		for (int i = 0; i < buf.length; i++) {
+			if (sum == length) {
+				return i - sum + startTime;
+			}
 			if (buf[i]) {
 				sum++;
 			} else {
-				if (sum >= length) {
-					return i - sum + startTime;
-				} else {
-					sum = 0;
-				}
+				sum = 0;
 			}
 		}
 		if (sum >= length) {
@@ -85,12 +84,10 @@ public class Job {
 	public int findGap(int startTime, int length) {
 		int p = startTime;
 		for (int time : processed.keySet()) {
-			if (time < startTime
-					&& time + operations.get(processed.get(time)) > startTime) {
+			if (!(time < p && time + operations.get(processed.get(time)) < p)
+					&& !(time > p + length && time
+							+ operations.get(processed.get(time)) > p + length)) {
 				p = time + operations.get(processed.get(time));
-			}
-			if (time >= startTime && time < startTime + length) {
-				startTime = time + operations.get(processed.get(time));
 			}
 		}
 		return p;

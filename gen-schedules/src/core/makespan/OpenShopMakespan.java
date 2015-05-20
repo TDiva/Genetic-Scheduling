@@ -13,15 +13,15 @@ import core.chromosomes.OpenShopScheduleChromosome;
 
 public class OpenShopMakespan implements MakespanManager {
 
-	private Problem problem;
+	protected Problem problem;
 
 	public OpenShopMakespan(Problem p) {
 		problem = p;
 	}
 
-	private Map<BaseChromosome, Integer> cache = new HashMap<>();
+	protected Map<BaseChromosome, Integer> cache = new HashMap<>();
 
-	private Integer getCachedScheduleTime(BaseChromosome ch) {
+	protected Integer getCachedScheduleTime(BaseChromosome ch) {
 		if (cache.containsKey(ch)) {
 			return cache.get(ch);
 		}
@@ -49,19 +49,19 @@ public class OpenShopMakespan implements MakespanManager {
 		return schedule;
 	}
 
-	private int getOperationJob(int index) {
+	public int getOperationJob(int index) {
 		return index / problem.getNumberOfMachines();
 	}
 
-	private int getOperationMachine(int index) {
+	public int getOperationMachine(int index) {
 		return index % problem.getNumberOfMachines();
 	}
 
-	private int getOperationLength(int machine, int job) {
+	protected int getOperationLength(int machine, int job) {
 		return problem.getOperation(job, machine);
 	}
 
-	private int getNumberOfOperations() {
+	protected int getNumberOfOperations() {
 		return problem.getNumberOfMachines() * problem.getNumberOfJobs();
 	}
 

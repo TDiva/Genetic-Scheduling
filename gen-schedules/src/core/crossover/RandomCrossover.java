@@ -50,32 +50,31 @@ public class RandomCrossover implements CrossoverManager {
 			}
 			mask /= 2;
 		}
-		Set<Integer> gens1 = new HashSet<Integer>();
-		Set<Integer> gens2 = new HashSet<Integer>();
-		for (int i = 0; i < p1.getLength(); i++) {
-			if (gens1.contains(c1.get(i))) {
-				int item = (c1.get(i) + 1) % p1.getLength();
-				while (gens1.contains(item)) {
-					item++;
-					item %= p1.getLength();
-				}
-				c1.set(i, item);
-				gens1.add(item);
-			} else {
-				gens1.add(c1.get(i));
+		Set<Integer> set1 = new HashSet<>();
+		Set<Integer> set2 = new HashSet<>();
+
+		for (int i = 0; i < c1.size(); i++) {
+			int c = c1.get(i);
+
+			while (set1.contains(c)) {
+				c++;
+				c %= c1.size();
 			}
-			if (gens2.contains(c1.get(i))) {
-				int item = (c2.get(i) + 1) % p1.getLength();
-				while (gens2.contains(item)) {
-					item++;
-					item %= p2.getLength();
-				}
-				c2.set(i, item);
-				gens2.add(item);
-			} else {
-				gens2.add(c2.get(i));
+			set1.add(c);
+			c1.set(i, c);
+
+			c = c2.get(i);
+
+			while (set2.contains(c)) {
+				c++;
+				c %= c2.size();
 			}
+			set2.add(c);
+			c2.set(i, c);
 		}
+
+		// System.out.println(p1 + "\t" + p2);
+		// System.out.println(c1 + "\t" + c2);
 		return new Pair<>(p1.clone(c1), p2.clone(c2));
 	}
 

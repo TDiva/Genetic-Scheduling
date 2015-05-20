@@ -15,12 +15,12 @@ public class EvolutionManager {
 
 	public int iterations = 0;
 
-	private CrossoverManager crossoverManager;
-	private MutationManager mutationManager;
-	private SelectionManager selectionManager;
-	private MakespanManager makespanManager;
+	protected CrossoverManager crossoverManager;
+	protected MutationManager mutationManager;
+	protected SelectionManager selectionManager;
+	protected MakespanManager makespanManager;
 
-	public final Comparator<BaseChromosome> chComp = new Comparator<BaseChromosome>() {
+	protected final Comparator<BaseChromosome> chComp = new Comparator<BaseChromosome>() {
 
 		@Override
 		public int compare(BaseChromosome c1, BaseChromosome c2) {
@@ -36,7 +36,7 @@ public class EvolutionManager {
 		makespanManager = pr;
 	}
 
-	private Population evolution(Population p, int size) {
+	protected Population evolution(Population p, int size) {
 		Population ch = crossoverManager.crossover(p);
 		mutationManager.mutation(ch);
 		p.getIndividuals().addAll(ch.getIndividuals());
@@ -52,6 +52,7 @@ public class EvolutionManager {
 		}
 
 		BaseChromosome best = Collections.min(p.getIndividuals(), chComp);
+		// System.out.println("\nBest\t" + best);
 
 		return makespanManager.translate(best);
 	}
@@ -71,8 +72,9 @@ public class EvolutionManager {
 		} while (((double) (worst - best)) / worst > coef);
 
 		this.iterations = it;
-		return makespanManager.translate(Collections.min(p.getIndividuals(),
-				chComp));
+		BaseChromosome bestC = Collections.min(p.getIndividuals(), chComp);
+		// System.out.println("\nBest\t" + bestC);
+		return makespanManager.translate(bestC);
 
 	}
 }

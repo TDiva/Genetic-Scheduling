@@ -18,11 +18,11 @@ public class OpenShopScheduleChromosome extends BaseChromosome {
 		Collections.shuffle(genes);
 		setGenom(genes);
 	}
-	
+
 	public OpenShopScheduleChromosome clone() {
 		return new OpenShopScheduleChromosome(getGenom());
 	}
-	
+
 	public OpenShopScheduleChromosome clone(List<Integer> genom) {
 		return new OpenShopScheduleChromosome(genom);
 	}

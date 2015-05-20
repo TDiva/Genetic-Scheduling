@@ -10,7 +10,7 @@ public class BaseChromosome implements Cloneable {
 	public BaseChromosome(List<Integer> genom) {
 		this.genom = new ArrayList<Integer>(genom);
 	}
-	
+
 	public BaseChromosome() {
 		genom = new ArrayList<>();
 	}
@@ -18,7 +18,7 @@ public class BaseChromosome implements Cloneable {
 	public List<Integer> getGenom() {
 		return genom;
 	}
-	
+
 	public void setGenom(List<Integer> genes) {
 		this.genom = genes;
 	}
@@ -47,8 +47,14 @@ public class BaseChromosome implements Cloneable {
 	public BaseChromosome clone() {
 		return new BaseChromosome(getGenom());
 	}
-	
+
 	public BaseChromosome clone(List<Integer> genom) {
 		return new BaseChromosome(genom);
 	}
+
+	@Override
+	public String toString() {
+		return "BaseChromosome [genom=" + genom + "]";
+	}
+
 }
