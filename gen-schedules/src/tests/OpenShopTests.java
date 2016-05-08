@@ -52,7 +52,6 @@ public class OpenShopTests {
 	}
 
 	@Test
-	@Ignore
 	public void testGenetic() {
 		Problem p = getProblem();
 		System.out.println(String.format(
@@ -98,7 +97,6 @@ public class OpenShopTests {
 				(c1.getTime() - c3.getTime()) * 100 / c1.getTime()));
 	}
 
-	@Ignore
 	@Test
 	public void testHybrid() {
 		Problem p = getProblem();
@@ -152,7 +150,6 @@ public class OpenShopTests {
 
 	}
 
-	@Ignore
 	@Test
 	public void testFitnessFunctionHybrid() {
 		Problem p = getProblem();
@@ -201,7 +198,7 @@ public class OpenShopTests {
 				(c1.getTime() - c3.getTime()) * 100 / c1.getTime()));
 	}
 
-	// @Ignore
+	@Ignore
 	@Test
 	public void manyTests() {
 		for (int JOBS = 10; JOBS <= 100; JOBS += 10) {
