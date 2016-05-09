@@ -52,8 +52,24 @@ public class Problem {
 		for (int i = 0; i < numberOfJobs; i++) {
 			sb.append(Arrays.toString(operations[i]) + "\n");
 		}
+		sb.append("Lower border of solution = " + getLowerBorderOfSolution() + "\n");
 
 		return sb.toString();
+	}
+
+	public int getLowerBorderOfSolution() {
+		int max = 0;
+		for (int i = 0; i< numberOfJobs; i++) {
+			max = Math.max(max, Arrays.stream(operations[i]).sum());
+		}
+		for (int i = 0; i< numberOfMachines; i++) {
+			int sum = 0;
+			for (int j = 0; j< numberOfJobs; j++) {
+				sum += operations[j][i];
+			}
+			max = Math.max(max, sum);
+		}
+		return max;
 	}
 
 }

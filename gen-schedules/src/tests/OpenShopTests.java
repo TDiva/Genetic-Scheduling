@@ -2,33 +2,35 @@ package tests;
 
 import java.util.Random;
 
-import modification.LocalSearchModificationManager;
-import modification.ModificationManager;
+import algorithm.genetic.GeneticOpenShopCMax;
+import algorithm.genetic.core.crossover.selection.ParentingManager;
+import algorithm.genetic.modification.LocalSearchModificationManager;
+import algorithm.genetic.modification.ModificationManager;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import problem.Problem;
 import problem.Schedule;
-import approximate.ApproximateOpenShopCMax;
-import core.crossover.CrossoverManager;
-import core.crossover.HybridCrossover;
-import core.crossover.RandomCrossover;
-import core.crossover.selection.CrossoverWheel;
-import core.makespan.HybridMakespanManager;
-import core.makespan.MakespanManager;
-import core.makespan.OpenShopMakespan;
-import core.mutation.MutationManager;
-import core.mutation.SwapMutation;
-import core.selection.EliteSelection;
-import core.selection.SelectionManager;
-import evolution.EvolutionManager;
-import evolution.LamarkaEvolutionManager;
+import algorithm.approximate.ApproximateOpenShopCMax;
+import algorithm.genetic.core.crossover.CrossoverManager;
+import algorithm.genetic.core.crossover.HybridCrossover;
+import algorithm.genetic.core.crossover.RandomCrossover;
+import algorithm.genetic.core.crossover.selection.CrossoverWheel;
+import algorithm.genetic.core.makespan.HybridMakespanManager;
+import algorithm.genetic.core.makespan.MakespanManager;
+import algorithm.genetic.core.makespan.OpenShopMakespan;
+import algorithm.genetic.core.mutation.MutationManager;
+import algorithm.genetic.core.mutation.SwapMutation;
+import algorithm.genetic.core.selection.EliteSelection;
+import algorithm.genetic.core.selection.SelectionManager;
+import algorithm.genetic.core.evolution.EvolutionManager;
+import algorithm.genetic.core.evolution.LamarkaEvolutionManager;
 
 public class OpenShopTests {
 
 	public static final Random r = new Random(System.currentTimeMillis());
-	public static final int MAX_LENGTH = 1000;
+	public static final int MAX_LENGTH = 10;
 
 	public static final int JOBS = 3;
 	public static final int MACHINES = 3;
@@ -51,50 +53,79 @@ public class OpenShopTests {
 		return new Problem(MACHINES, JOBS, op);
 	}
 
+    public Problem getProblemFix() {
+        int[][] op = new int[][]{
+                {9, 0, 5},
+                {5, 8, 8},
+                {6, 1, 5}
+        };
+        return new Problem(MACHINES, JOBS, op);
+    }
+
 	@Test
 	public void testGenetic() {
-		Problem p = getProblem();
+		Problem p = getProblemFix();
 		System.out.println(String.format(
 				"Open Shop: m = %d, n = %d, max = %d\n", MACHINES, JOBS,
 				MAX_LENGTH));
-		ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax();
+        System.out.println(p);
+        System.out.println("**********");
+		ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax(p);
 
 		long startTime = System.currentTimeMillis();
-		Schedule c1 = approximate.generateSchedule(p);
+		Schedule c1 = approximate.generateSchedule();
 		long endTime = System.currentTimeMillis();
 		System.out.println(String.format("Approximate: %d \n\t time: %d mls ",
 				c1.getTime(), endTime - startTime));
+        System.out.println(c1);
+        System.out.println("**********");
 
-		MakespanManager mk = new OpenShopMakespan(p);
-		CrossoverManager cr = new RandomCrossover(new CrossoverWheel());
-		MutationManager mt = new SwapMutation(MUTATION);
-		SelectionManager sl = new EliteSelection(mk);
-		EvolutionManager evolution = new EvolutionManager(cr, mt, sl, mk);
+		GeneticOpenShopCMax geneticIterative = new GeneticOpenShopCMax(p,
+				ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
+				CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
+				MutationManager.MutationManagerType.SWAP_MUTATION,
+				MUTATION,
+				SelectionManager.SelectionManagerType.ELITE_SELECTION,
+				SIZE_OF_POPULATION, EVOLUTION_ITERATIONS, 0);
 
 		startTime = System.currentTimeMillis();
-		Schedule c2 = evolution.generateSchedule(EVOLUTION_ITERATIONS,
-				SIZE_OF_POPULATION);
+		Schedule c2 = geneticIterative.generateSchedule();
 		endTime = System.currentTimeMillis();
 		System.out
 				.println(String
 						.format("Iterative evo: %d \n\t size: %d, mutation: %.2f, iterations: %d, time: %d mls",
 								c2.getTime(), SIZE_OF_POPULATION, MUTATION,
 								EVOLUTION_ITERATIONS, endTime - startTime));
+        System.out.println(c2);
+        System.out.println("**********");
+
+		GeneticOpenShopCMax geneticStohastic = new GeneticOpenShopCMax(p,
+				ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
+				CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
+				MutationManager.MutationManagerType.SWAP_MUTATION,
+				MUTATION,
+				SelectionManager.SelectionManagerType.ELITE_SELECTION,
+				SIZE_OF_POPULATION, 0, EVOLUTION_COEFFICIENT);
 
 		startTime = System.currentTimeMillis();
-		Schedule c3 = evolution.generateSchedule(EVOLUTION_COEFFICIENT,
-				SIZE_OF_POPULATION);
+		Schedule c3 = geneticStohastic.generateSchedule();
 		endTime = System.currentTimeMillis();
 		System.out
 				.println(String
 						.format("Stohastic evo: %d \n\t size: %d, mutation: %.2f, iterations: %d, time: %d mls",
 								c3.getTime(), SIZE_OF_POPULATION, MUTATION,
-								evolution.iterations, endTime - startTime));
+								geneticStohastic.getNumberOfIterations(), endTime - startTime));
+        System.out.println(c3);
+        System.out.println("**********");
+
+        int bord = p.getLowerBorderOfSolution();
 
 		System.out.println(String.format(
-				"Quality: \n\t iterative: %d%% \n\t stohastic: %d%%",
-				(c1.getTime() - c2.getTime()) * 100 / c1.getTime(),
-				(c1.getTime() - c3.getTime()) * 100 / c1.getTime()));
+				"Quality (from lower border = %d): \n\t approx: %d%%\n\t iterative: %d%% \n\t stohastic: %d%%",
+				bord,
+                (c1.getTime() - bord) * 100 / bord,
+                (c2.getTime() - bord) * 100 / bord,
+				(c3.getTime() - bord) * 100 / bord));
 	}
 
 	@Test
@@ -104,10 +135,10 @@ public class OpenShopTests {
 				"Open Shop: m = %d, n = %d, max = %d\n", MACHINES, JOBS,
 				MAX_LENGTH));
 		System.out.println(p.toString());
-		ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax();
+		ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax(p);
 
 		long startTime = System.currentTimeMillis();
-		Schedule c1 = approximate.generateSchedule(p);
+		Schedule c1 = approximate.generateSchedule();
 		long endTime = System.currentTimeMillis();
 		System.out.println(String.format("Approximate: %d \n\t time: %d mls ",
 				c1.getTime(), endTime - startTime));
@@ -157,10 +188,10 @@ public class OpenShopTests {
 		System.out.println(String.format(
 				"Open Shop: m = %d, n = %d, max = %d\n", MACHINES, JOBS,
 				MAX_LENGTH));
-		ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax();
+		ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax(p);
 
 		long startTime = System.currentTimeMillis();
-		Schedule c1 = approximate.generateSchedule(p);
+		Schedule c1 = approximate.generateSchedule();
 		long endTime = System.currentTimeMillis();
 		System.out.println(String.format("Approximate: %d \n\t time: %d mls ",
 				c1.getTime(), endTime - startTime));
@@ -227,10 +258,10 @@ public class OpenShopTests {
 				for (int i = 0; i < NUMBER_OF_TESTS; i++) {
 					Problem p = getProblem();
 
-					ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax();
+					ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax(p);
 
 					long startTime = System.currentTimeMillis();
-					Schedule c1 = approximate.generateSchedule(p);
+					Schedule c1 = approximate.generateSchedule();
 					long endTime = System.currentTimeMillis();
 
 					MakespanManager mk = new OpenShopMakespan(p);

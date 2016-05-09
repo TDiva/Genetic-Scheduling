@@ -1,5 +1,7 @@
 package problem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -10,12 +12,14 @@ public class Machine {
 
 	private int index;
 	private Map<Integer, Job> schedule;
+    private List<Integer> zeroJobs;
 
 	private int time = 0;
 
 	public Machine(int index) {
 		this.index = index;
-		schedule = new TreeMap<Integer, Job>();
+		schedule = new TreeMap<>();
+        zeroJobs = new ArrayList<>();
 	}
 
 	public int getTime() {
@@ -31,21 +35,23 @@ public class Machine {
 	}
 
 	public int completedJobs() {
-		return schedule.size();
+		return schedule.size() + zeroJobs.size();
 	}
 
 	public boolean completedJob(Job job) {
-		return schedule.containsValue(job);
+		return schedule.containsValue(job) || zeroJobs.contains(job.getIndex());
 	}
 
 	public void addJob(Job job) {
 		int length = job.getOperationLength(index);
 		if (length == 0) {
-			return;
+			zeroJobs.add(job.getIndex());
+            job.processZeroOperation(index);
+            return;
 		}
 		int endTime = 0;
 		for (int startTime : schedule.keySet()) {
-			if ((startTime - endTime) > length) {
+			if ((startTime - endTime) >= length) {
 				int time = job.findGap(endTime, startTime, length);
 				if (time >= 0) {
 					schedule.put(time, job);
