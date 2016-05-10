@@ -61,7 +61,7 @@ public class Job {
 				endTime = left;
 			} else if (left >= startTime && right <= endTime) {
 				if (left - startTime > length)
-					return left;
+					return startTime;
 				startTime = right;
 			}
 		}
