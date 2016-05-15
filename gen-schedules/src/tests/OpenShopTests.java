@@ -1,26 +1,13 @@
 package tests;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-import algorithm.genetic.GeneticOpenShopCMax;
-import algorithm.genetic.core.crossover.selection.ParentingManager;
-import algorithm.genetic.modification.LocalSearchModificationManager;
-import algorithm.genetic.modification.ModificationManager;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import problem.Problem;
-import problem.Schedule;
 import algorithm.approximate.ApproximateOpenShopCMax;
+import algorithm.genetic.GeneticOpenShopCMax;
 import algorithm.genetic.core.crossover.CrossoverManager;
 import algorithm.genetic.core.crossover.HybridCrossover;
 import algorithm.genetic.core.crossover.RandomCrossover;
 import algorithm.genetic.core.crossover.selection.CrossoverWheel;
+import algorithm.genetic.core.evolution.EvolutionManager;
+import algorithm.genetic.core.evolution.LamarkaEvolutionManager;
 import algorithm.genetic.core.makespan.HybridMakespanManager;
 import algorithm.genetic.core.makespan.MakespanManager;
 import algorithm.genetic.core.makespan.OpenShopMakespan;
@@ -28,16 +15,16 @@ import algorithm.genetic.core.mutation.MutationManager;
 import algorithm.genetic.core.mutation.SwapMutation;
 import algorithm.genetic.core.selection.EliteSelection;
 import algorithm.genetic.core.selection.SelectionManager;
-import algorithm.genetic.core.evolution.EvolutionManager;
-import algorithm.genetic.core.evolution.LamarkaEvolutionManager;
+import algorithm.genetic.modification.LocalSearchModificationManager;
+import algorithm.genetic.modification.ModificationManager;
+import org.junit.Ignore;
+import org.junit.Test;
+import problem.Problem;
+import problem.Schedule;
 
-@RunWith(Parameterized.class)
+import java.util.Random;
+
 public class OpenShopTests {
-
-    @Parameterized.Parameters
-    public static List<Object[]> data() {
-        return Arrays.asList(new Object[10][0]);
-    }
 
 	public static final Random r = new Random(System.currentTimeMillis());
 	public static final int MAX_LENGTH = 10;
@@ -53,7 +40,7 @@ public class OpenShopTests {
 
 	public static final int SIZE_OF_POPULATION = 100;
 
-	public Problem getProblem() {
+	public static Problem getProblem() {
 		int[][] op = new int[JOBS][MACHINES];
 		for (int i = 0; i < JOBS; i++) {
 			for (int j = 0; j < MACHINES; j++) {
@@ -93,12 +80,9 @@ public class OpenShopTests {
         System.out.println("**********");
 
 		GeneticOpenShopCMax geneticIterative = new GeneticOpenShopCMax(p,
-				ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
-				CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
-				MutationManager.MutationManagerType.SWAP_MUTATION,
 				MUTATION,
-				SelectionManager.SelectionManagerType.ELITE_SELECTION,
-				SIZE_OF_POPULATION, EVOLUTION_ITERATIONS, 0);
+				SIZE_OF_POPULATION,
+                EVOLUTION_ITERATIONS);
 
 		startTime = System.currentTimeMillis();
 		Schedule c2 = geneticIterative.generateSchedule();
@@ -112,12 +96,9 @@ public class OpenShopTests {
         System.out.println("**********");
 
 		GeneticOpenShopCMax geneticStohastic = new GeneticOpenShopCMax(p,
-				ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
-				CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
-				MutationManager.MutationManagerType.SWAP_MUTATION,
 				MUTATION,
-				SelectionManager.SelectionManagerType.ELITE_SELECTION,
-				SIZE_OF_POPULATION, 0, EVOLUTION_COEFFICIENT);
+				SIZE_OF_POPULATION,
+                EVOLUTION_COEFFICIENT);
 
 		startTime = System.currentTimeMillis();
 		Schedule c3 = geneticStohastic.generateSchedule();

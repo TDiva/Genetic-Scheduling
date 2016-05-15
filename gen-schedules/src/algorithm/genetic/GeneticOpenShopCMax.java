@@ -3,7 +3,6 @@ package algorithm.genetic;
 import algorithm.BaseSolver;
 import algorithm.Solver;
 import algorithm.genetic.core.crossover.CrossoverManager;
-import algorithm.genetic.core.crossover.HybridCrossover;
 import algorithm.genetic.core.crossover.RandomCrossover;
 import algorithm.genetic.core.crossover.selection.CrossoverWheel;
 import algorithm.genetic.core.crossover.selection.ParentingManager;
@@ -35,6 +34,38 @@ public class GeneticOpenShopCMax extends BaseSolver implements Solver {
     private double equalityCoeff;
 
     public GeneticOpenShopCMax(Problem p,
+                               double mutation,
+                               int sizeOfPopulation,
+                               int maxIterations) {
+        this(p,
+                ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
+                CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
+                MutationManager.MutationManagerType.SWAP_MUTATION,
+                mutation,
+                SelectionManager.SelectionManagerType.ELITE_SELECTION,
+                sizeOfPopulation,
+                maxIterations,
+                0d
+                );
+    }
+
+    public GeneticOpenShopCMax(Problem p,
+                               double mutation,
+                               int sizeOfPopulation,
+                               double diffCoeff) {
+        this(p,
+                ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
+                CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
+                MutationManager.MutationManagerType.SWAP_MUTATION,
+                mutation,
+                SelectionManager.SelectionManagerType.ELITE_SELECTION,
+                sizeOfPopulation,
+                0,
+                diffCoeff
+        );
+    }
+
+    public GeneticOpenShopCMax(Problem p,
                                ParentingManager.ParentingManagerType parentingManagerType,
                                CrossoverManager.CrossoverManagerType crossoverManagerType,
                                MutationManager.MutationManagerType mutationManagerType,
@@ -55,9 +86,6 @@ public class GeneticOpenShopCMax extends BaseSolver implements Solver {
         switch (crossoverManagerType) {
             case RANDOM_CROSSOVER:
                 this.crossoverManager = new RandomCrossover(parentingManager);
-                break;
-            case HYBRID_CROSSOVER:
-                this.crossoverManager = new HybridCrossover(parentingManager);
                 break;
             default: throw new UnsupportedOperationException("Crossover manager type " + crossoverManagerType.name() + " is not supported");
         }
