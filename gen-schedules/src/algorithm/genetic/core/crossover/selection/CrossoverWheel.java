@@ -19,12 +19,12 @@ public class CrossoverWheel implements ParentingManager {
 
 	public CrossoverWheel() {
 		size = 0;
-		wheel = new TreeMap<Integer, BaseChromosome>();
+		wheel = new TreeMap<>();
 	}
 
 	public void assignPopulation(Population population) {
 		size = 0;
-		wheel = new TreeMap<Integer, BaseChromosome>();
+		wheel = new TreeMap<>();
 		for (BaseChromosome chromosome : population.getIndividuals()) {
 			size++;
 			// TODO: add criteria of quality

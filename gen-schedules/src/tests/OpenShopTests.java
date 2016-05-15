@@ -1,5 +1,7 @@
 package tests;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import algorithm.genetic.GeneticOpenShopCMax;
@@ -10,6 +12,8 @@ import algorithm.genetic.modification.ModificationManager;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import problem.Problem;
 import problem.Schedule;
 import algorithm.approximate.ApproximateOpenShopCMax;
@@ -27,16 +31,22 @@ import algorithm.genetic.core.selection.SelectionManager;
 import algorithm.genetic.core.evolution.EvolutionManager;
 import algorithm.genetic.core.evolution.LamarkaEvolutionManager;
 
+@RunWith(Parameterized.class)
 public class OpenShopTests {
+
+    @Parameterized.Parameters
+    public static List<Object[]> data() {
+        return Arrays.asList(new Object[10][0]);
+    }
 
 	public static final Random r = new Random(System.currentTimeMillis());
 	public static final int MAX_LENGTH = 10;
 
-	public static final int JOBS = 3;
+	public static final int JOBS = 5;
 	public static final int MACHINES = 3;
 
 	public static final double MUTATION = 0.5d;
-	public static final int EVOLUTION_ITERATIONS = 10;
+	public static final int EVOLUTION_ITERATIONS = 30;
 	public static final double EVOLUTION_COEFFICIENT = 1e-3;
 
 	public static final int NUMBER_OF_TESTS = 100;
@@ -55,16 +65,18 @@ public class OpenShopTests {
 
     public Problem getProblemFix() {
         int[][] op = new int[][]{
-                {9, 0, 5},
-                {5, 8, 8},
-                {6, 1, 5}
+                {2,3,1,0,1},
+                {5,0,5,6,4},
+                {9,1,5,7,5},
+                {8,8,2,5,6},
+                {1,2,0,0,8}
         };
         return new Problem(MACHINES, JOBS, op);
     }
 
 	@Test
 	public void testGenetic() {
-		Problem p = getProblemFix();
+		Problem p = getProblem();
 		System.out.println(String.format(
 				"Open Shop: m = %d, n = %d, max = %d\n", MACHINES, JOBS,
 				MAX_LENGTH));
@@ -123,9 +135,9 @@ public class OpenShopTests {
 		System.out.println(String.format(
 				"Quality (from lower border = %d): \n\t approx: %d%%\n\t iterative: %d%% \n\t stohastic: %d%%",
 				bord,
-                (c1.getTime() - bord) * 100 / bord,
-                (c2.getTime() - bord) * 100 / bord,
-				(c3.getTime() - bord) * 100 / bord));
+                c1.getTime() * 100 / bord,
+                (c2.getTime()) * 100 / bord,
+				(c3.getTime()) * 100 / bord));
 	}
 
 	@Test
