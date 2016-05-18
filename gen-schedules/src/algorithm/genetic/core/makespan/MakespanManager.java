@@ -1,12 +1,12 @@
 package algorithm.genetic.core.makespan;
 
-import problem.Schedule;
 import algorithm.genetic.core.Population;
 import algorithm.genetic.core.chromosomes.BaseChromosome;
+import problem.Schedule;
 
 public interface MakespanManager {
 
-	int makespan(BaseChromosome ch);
+	long makespan(BaseChromosome ch);
 
 	Schedule translate(BaseChromosome ch);
 

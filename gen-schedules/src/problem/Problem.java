@@ -57,8 +57,8 @@ public class Problem {
 		return sb.toString();
 	}
 
-	public int getLowerBorderOfSolution() {
-		int max = 0;
+	public long getLowerBorderOfSolution() {
+		long max = 0;
 		for (int i = 0; i< numberOfJobs; i++) {
 			max = Math.max(max, Arrays.stream(operations[i]).sum());
 		}

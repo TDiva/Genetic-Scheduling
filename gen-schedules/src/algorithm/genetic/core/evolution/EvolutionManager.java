@@ -1,15 +1,15 @@
 package algorithm.genetic.core.evolution;
 
-import java.util.Collections;
-import java.util.Comparator;
-
-import problem.Schedule;
 import algorithm.genetic.core.Population;
 import algorithm.genetic.core.chromosomes.BaseChromosome;
 import algorithm.genetic.core.crossover.CrossoverManager;
 import algorithm.genetic.core.makespan.MakespanManager;
 import algorithm.genetic.core.mutation.MutationManager;
 import algorithm.genetic.core.selection.SelectionManager;
+import problem.Schedule;
+
+import java.util.Collections;
+import java.util.Comparator;
 
 public class EvolutionManager {
 
@@ -24,7 +24,7 @@ public class EvolutionManager {
 
 		@Override
 		public int compare(BaseChromosome c1, BaseChromosome c2) {
-			return makespanManager.makespan(c1) - makespanManager.makespan(c2);
+			return Long.valueOf(makespanManager.makespan(c1)).compareTo(makespanManager.makespan(c2));
 		}
 	};
 
@@ -61,7 +61,7 @@ public class EvolutionManager {
 		int it = 0;
 		Population p = makespanManager.createPopulation(size);
 		BaseChromosome bestc = null, worstc = null;
-		int best = 0, worst = 0;
+		long best = 0, worst = 0;
 		do {
 			it++;
 			p = evolution(p, size);

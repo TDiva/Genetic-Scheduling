@@ -11,10 +11,10 @@ import java.util.TreeMap;
 public class Machine {
 
 	private int index;
-	private Map<Integer, Job> schedule;
+	private Map<Long, Job> schedule;
     private List<Integer> zeroJobs;
 
-	private int time = 0;
+	private long time = 0;
 
 	public Machine(int index) {
 		this.index = index;
@@ -22,7 +22,7 @@ public class Machine {
         zeroJobs = new ArrayList<>();
 	}
 
-	public int getTime() {
+	public long getTime() {
 		return time;
 	}
 
@@ -30,7 +30,7 @@ public class Machine {
 		return index;
 	}
 
-	public Map<Integer, Job> getSchedule() {
+	public Map<Long, Job> getSchedule() {
 		return schedule;
 	}
 
@@ -49,10 +49,10 @@ public class Machine {
             job.processZeroOperation(index);
             return;
 		}
-		int endTime = 0;
-		for (int startTime : schedule.keySet()) {
+		long endTime = 0;
+		for (long startTime : schedule.keySet()) {
 			if ((startTime - endTime) >= length) {
-				int time = job.findGap(endTime, startTime, length);
+				long time = job.findGap(endTime, startTime, length);
 				if (time >= 0) {
 					schedule.put(time, job);
 					job.processOperation(index, time);
@@ -68,9 +68,22 @@ public class Machine {
 		time += job.getOperationLength(index);
 	}
 
+    public void simplyAddJob(Job job) {
+        int length = job.getOperationLength(index);
+        if (length == 0) {
+            zeroJobs.add(job.getIndex());
+            job.processZeroOperation(index);
+            return;
+        }
+        time = job.findGap(time, length);
+        schedule.put(time, job);
+        job.processOperation(index, time);
+        time += job.getOperationLength(index);
+    }
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		for (Integer startTime : schedule.keySet()) {
+		for (long startTime : schedule.keySet()) {
 			sb.append(startTime);
 			sb.append(": ");
 			sb.append(schedule.get(startTime).getIndex());

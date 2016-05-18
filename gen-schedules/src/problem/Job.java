@@ -9,7 +9,7 @@ public class Job {
 	/*
 	 * Key: time Value: machine (operation) number
 	 */
-	Map<Integer, Integer> processed;
+	Map<Long, Integer> processed;
     List<Integer> processedZeroJobs;
 
 	private int index;
@@ -37,7 +37,7 @@ public class Job {
 		return operations.get(index) == 0;
 	}
 
-	public void processOperation(int index, int startTime) {
+	public void processOperation(int index, long startTime) {
             processed.put(startTime, index);
 	}
 
@@ -47,12 +47,12 @@ public class Job {
 
 	// check whether job is free for the duration in this time gap
 	// and return the start time
-	public int findGap(int startTime, int endTime, int length) {
+	public long findGap(long startTime, long endTime, int length) {
 		if (endTime <= startTime)
 			return -1;
 
-		for (int left: processed.keySet()) {
-			int right = left + operations.get(processed.get(left));
+		for (long left: processed.keySet()) {
+			long right = left + operations.get(processed.get(left));
 			if (left <= startTime && right >= endTime) {
 				return -1;
 			} else if (left <= startTime && right > startTime) {
@@ -102,9 +102,9 @@ public class Job {
 
 	}
 
-	public int findGap(int startTime, int length) {
-		int p = startTime;
-		for (int time : processed.keySet()) {
+	public long findGap(long startTime, int length) {
+		long p = startTime;
+		for (long time : processed.keySet()) {
 			if (!(time < p && time + operations.get(processed.get(time)) < p)
 					&& !(time > p + length && time
 							+ operations.get(processed.get(time)) > p + length)) {
@@ -114,11 +114,11 @@ public class Job {
 		return p;
 	}
 
-	public int getFreeTime() {
+	public long getFreeTime() {
 		if (processed.isEmpty()) {
 			return 0;
 		}
-		int lastStart = Collections.max(processed.keySet());
+		long lastStart = Collections.max(processed.keySet());
 		int index = processed.get(lastStart);
 		int length = operations.get(index);
 		return lastStart + length;

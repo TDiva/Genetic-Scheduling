@@ -38,8 +38,12 @@ public class Schedule {
 		machines.get(machine).addJob(jobs.get(job));
 	}
 
-	public int getTime() {
-		int time = 0;
+    public void simplySchedule(int machine, int job) {
+        machines.get(machine).simplyAddJob(jobs.get(job));
+    }
+
+	public long getTime() {
+		long time = 0;
 		for (Machine machine : machines) {
 			if (time < machine.getTime()) {
 				time = machine.getTime();

@@ -27,7 +27,7 @@ import java.util.Random;
 public class OpenShopTests {
 
 	public static final Random r = new Random(System.currentTimeMillis());
-	public static final int MAX_LENGTH = 10;
+	public static final int MAX_LENGTH = 1000;
 
 	public static final int JOBS = 5;
 	public static final int MACHINES = 3;
@@ -111,7 +111,7 @@ public class OpenShopTests {
         System.out.println(c3);
         System.out.println("**********");
 
-        int bord = p.getLowerBorderOfSolution();
+        long bord = p.getLowerBorderOfSolution();
 
 		System.out.println(String.format(
 				"Quality (from lower border = %d): \n\t approx: %d%%\n\t iterative: %d%% \n\t stohastic: %d%%",

@@ -1,13 +1,13 @@
 package algorithm.genetic.modification;
 
+import algorithm.genetic.core.Population;
+import algorithm.genetic.core.chromosomes.BaseChromosome;
+import algorithm.genetic.core.makespan.MakespanManager;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import algorithm.genetic.core.Population;
-import algorithm.genetic.core.chromosomes.BaseChromosome;
-import algorithm.genetic.core.makespan.MakespanManager;
 
 public class LocalSearchModificationManager implements ModificationManager {
 
@@ -15,7 +15,7 @@ public class LocalSearchModificationManager implements ModificationManager {
 
 		@Override
 		public int compare(BaseChromosome c1, BaseChromosome c2) {
-			return makespanManager.makespan(c1) - makespanManager.makespan(c2);
+			return Long.valueOf(makespanManager.makespan(c1)).compareTo(makespanManager.makespan(c2));
 		}
 	};
 

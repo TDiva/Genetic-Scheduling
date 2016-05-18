@@ -1,15 +1,15 @@
 package algorithm.genetic.core.makespan;
 
+import algorithm.genetic.core.Population;
+import algorithm.genetic.core.chromosomes.BaseChromosome;
+import algorithm.genetic.core.chromosomes.OpenShopScheduleChromosome;
+import problem.Problem;
+import problem.Schedule;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import algorithm.genetic.core.chromosomes.OpenShopScheduleChromosome;
-import problem.Problem;
-import problem.Schedule;
-import algorithm.genetic.core.Population;
-import algorithm.genetic.core.chromosomes.BaseChromosome;
 
 public class OpenShopMakespan implements MakespanManager {
 
@@ -19,19 +19,19 @@ public class OpenShopMakespan implements MakespanManager {
         problem = p;
     }
 
-    protected Map<BaseChromosome, Integer> cache = new HashMap<>();
+    protected Map<BaseChromosome, Long> cache = new HashMap<>();
 
-    protected Integer getCachedScheduleTime(BaseChromosome ch) {
+    protected long getCachedScheduleTime(BaseChromosome ch) {
         if (cache.containsKey(ch)) {
             return cache.get(ch);
         }
-        int val = translate(ch).getTime();
+        long val = translate(ch).getTime();
         cache.put(ch, val);
         return val;
     }
 
     @Override
-    public int makespan(BaseChromosome ch) {
+    public long makespan(BaseChromosome ch) {
         return getCachedScheduleTime(ch);
     }
 
