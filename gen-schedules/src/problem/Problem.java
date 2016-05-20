@@ -1,6 +1,7 @@
 package problem;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Problem {
 	private int numberOfMachines;
@@ -52,8 +53,7 @@ public class Problem {
 		for (int i = 0; i < numberOfJobs; i++) {
 			sb.append(Arrays.toString(operations[i]) + "\n");
 		}
-		sb.append("Lower border of solution = " + getLowerBorderOfSolution() + "\n");
-
+		sb.append("Lower border of CMax = " + getLowerBorderOfSolution() + "\n");
 		return sb.toString();
 	}
 
@@ -71,5 +71,17 @@ public class Problem {
 		}
 		return max;
 	}
+
+    public static Problem read(Scanner sc) {
+        int jobs = sc.nextInt();
+        int machines = sc.nextInt();
+        int[][] op = new int[jobs][machines];
+        for (int i = 0; i<jobs;i++) {
+            for (int j = 0; j<machines; j++) {
+                op[i][j] = sc.nextInt();
+            }
+        }
+        return new Problem(jobs, machines, op);
+    }
 
 }

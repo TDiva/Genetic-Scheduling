@@ -1,5 +1,11 @@
 package app;
 
+import algorithm.Solver;
+import algorithm.approximate.ApproximateOpenShopCMax;
+import algorithm.genetic.GeneticOpenShopCMax;
+import problem.Problem;
+import problem.Schedule;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -65,6 +71,9 @@ public class Application extends JFrame {
 		add(img, BorderLayout.EAST);
 
 		pack();
+
+        // FIXME: for debug. remove in release
+        inputArea.setText("3 3 1 2 3 4 5 6 7 8 9");
 	}
 
     public class ApplyButtonListener implements ActionListener {
@@ -72,16 +81,24 @@ public class Application extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Scanner sc = new Scanner(inputArea.getText());
+            Problem problem = Problem.read(sc);
 
-            while (sc.hasNext()) {
-                System.out.println(sc.nextLine() + "->");
-            }
+            System.out.println(problem.toString());
+
+            Solver solver = null;
             if (approxButton.isSelected()) {
                 System.out.println("Approx");
+                solver = new ApproximateOpenShopCMax(problem);
             } else if (geneticButton.isSelected()) {
                 System.out.println("Genetic");
+                solver = new GeneticOpenShopCMax(problem, 0, 1, 1);
             } else {
                 System.out.println("ERROR!");
+            }
+
+            if (solver != null) {
+                Schedule schedule = solver.generateSchedule();
+                System.out.println(schedule.toString());
             }
         }
     }

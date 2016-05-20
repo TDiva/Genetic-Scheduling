@@ -60,6 +60,7 @@ public class Schedule {
 			sb.append(m.toString());
 			sb.append("}\n");
 		}
+        sb.append("CMax:\t" + getTime());
 		return sb.toString();
 	}
 }
