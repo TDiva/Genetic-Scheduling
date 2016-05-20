@@ -98,6 +98,7 @@ public class Application extends JFrame {
 
             if (solver != null) {
                 Schedule schedule = solver.generateSchedule();
+                img.setIcon(ImageManager.getImage(schedule));
                 System.out.println(schedule.toString());
             }
         }

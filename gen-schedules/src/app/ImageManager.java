@@ -39,10 +39,10 @@ public class ImageManager {
 
     public static void drawAxes(Graphics2D g, double xCoeff, double yCoeff) {
         g.setColor(Color.BLACK);
-        g.drawLine(MARGIN, HEIGHT+MARGIN, WIDTH-MARGIN, HEIGHT+MARGIN);
+        g.drawLine(MARGIN, HEIGHT+MARGIN, WIDTH+MARGIN, HEIGHT+MARGIN);
         g.drawLine(MARGIN, MARGIN, MARGIN, HEIGHT+MARGIN);
 
-        long maxX = (long)(WIDTH / xCoeff);
+        long maxX = (long)(WIDTH / xCoeff + 0.5) + 1;
 
         int numQ = WIDTH / 50;
         int deltaX = (int)(maxX / numQ);
@@ -70,6 +70,8 @@ public class ImageManager {
         double yCoeff = ((double)(WIDTH)) / schedule.getMachines().size();
 
         drawAxes(g, xCoeff, yCoeff);
+        g.setColor(Color.RED);
+        g.drawString(schedule.toString(), MARGIN, HEIGHT/2);
 		
 		return new ImageIcon(img);
 	}
