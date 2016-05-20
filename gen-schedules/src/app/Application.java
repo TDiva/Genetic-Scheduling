@@ -1,57 +1,98 @@
 package app;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
+import java.util.Scanner;
 
 public class Application extends JFrame {
 	private static final long serialVersionUID = 8711822820148841971L;
 
-	JTextArea inputArea = new JTextArea();
+	protected JTextArea inputArea = new JTextArea();
 
-	JLabel img = new JLabel();
+	protected JLabel img = new JLabel();
+
+    protected JRadioButton approxButton = new JRadioButton("Approximate");
+    protected JRadioButton geneticButton = new JRadioButton("Genetic");
 
 	public Application() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(new Dimension(800, 600));
+
+        BorderLayout bL = new BorderLayout();
+        bL.setHgap(10);
+        bL.setVgap(10);
 		setLayout(new BorderLayout());
 
-		inputArea.setPreferredSize(new Dimension(300, HEIGHT));
-		inputArea.setEditable(true);
-		add(inputArea, BorderLayout.WEST);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(bL);
+        add(mainPanel, BorderLayout.CENTER);
 
-		JPanel propPanel = new JPanel();
-		propPanel.setPreferredSize(new Dimension(300, HEIGHT));
-		add(propPanel, BorderLayout.CENTER);
-		propPanel.add(new JLabel("hello"));
+        mainPanel.add(new JLabel("  Input parameters:  "), BorderLayout.NORTH);
+
+        JPanel inputPanel = new JPanel();
+        mainPanel.add(inputPanel, BorderLayout.CENTER);
+
+		inputArea.setPreferredSize(new Dimension(500, 400));
+		inputArea.setEditable(true);
+		inputPanel.add(inputArea, BorderLayout.NORTH);
+
+        approxButton.setSelected(true);
+        geneticButton.addActionListener(new SelectGeneticAlgListener());
+
+        ButtonGroup selectAlg = new ButtonGroup();
+        selectAlg.add(approxButton);
+        selectAlg.add(geneticButton);
+
+        JPanel butAlgPanel = new JPanel();
+        butAlgPanel.setLayout(new FlowLayout());
+        butAlgPanel.add(approxButton);
+        butAlgPanel.add(geneticButton);
+        inputPanel.add(butAlgPanel,
+                BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel();
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        JButton apply = new JButton("Apply");
+        apply.setPreferredSize(new Dimension(150, 30));
+        apply.addActionListener(new ApplyButtonListener());
+        bottomPanel.add(apply, BorderLayout.SOUTH);
 
 		img.setIcon(ImageManager.getImage(null));
+        img.setPreferredSize(new Dimension(ImageManager.getImageWidth(), ImageManager.getImageHeight()));
 		add(img, BorderLayout.EAST);
-
-		JPanel btmPanel = new JPanel();
-		add(btmPanel, BorderLayout.SOUTH);
-		btmPanel.setLayout(new FlowLayout());
-		JButton apply = new JButton("Apply");
-		apply.setPreferredSize(new Dimension(150, 30));
-		apply.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				System.out.println("Banzai!!!");
-			}
-		});
-		btmPanel.add(apply, BorderLayout.SOUTH);
 
 		pack();
 	}
+
+    public class ApplyButtonListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Scanner sc = new Scanner(inputArea.getText());
+
+            while (sc.hasNext()) {
+                System.out.println(sc.nextLine() + "->");
+            }
+            if (approxButton.isSelected()) {
+                System.out.println("Approx");
+            } else if (geneticButton.isSelected()) {
+                System.out.println("Genetic");
+            } else {
+                System.out.println("ERROR!");
+            }
+        }
+    }
+
+    public class SelectGeneticAlgListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("Genetic options shoulf be shown");
+        }
+    }
+
 
 	public static void main(String[] args) {
 		Application app = new Application();
