@@ -22,25 +22,24 @@ public class Application extends JFrame {
     protected JRadioButton approxButton = new JRadioButton("Approximate");
     protected JRadioButton geneticButton = new JRadioButton("Genetic");
 
+    protected JTextArea infoArea = new JTextArea();
+
 	public Application() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(new Dimension(800, 600));
-
-        BorderLayout bL = new BorderLayout();
-        bL.setHgap(10);
-        bL.setVgap(10);
-		setLayout(new BorderLayout());
+		setLayout(new BorderLayout(10,10));
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(bL);
+        mainPanel.setLayout(new BorderLayout(10,10));
         add(mainPanel, BorderLayout.CENTER);
 
         mainPanel.add(new JLabel("  Input parameters:  "), BorderLayout.NORTH);
 
         JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BorderLayout(10, 10));
         mainPanel.add(inputPanel, BorderLayout.CENTER);
 
-		inputArea.setPreferredSize(new Dimension(500, 400));
+		inputArea.setPreferredSize(new Dimension(400, 150));
 		inputArea.setEditable(true);
 		inputPanel.add(inputArea, BorderLayout.NORTH);
 
@@ -58,13 +57,21 @@ public class Application extends JFrame {
         inputPanel.add(butAlgPanel,
                 BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel();
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-
         JButton apply = new JButton("Apply");
         apply.setPreferredSize(new Dimension(150, 30));
         apply.addActionListener(new ApplyButtonListener());
-        bottomPanel.add(apply, BorderLayout.SOUTH);
+        inputPanel.add(apply, BorderLayout.SOUTH);
+
+        JPanel infoPanel = new JPanel();
+        mainPanel.add(infoPanel, BorderLayout.SOUTH);
+        infoArea.setEditable(false);
+        infoArea.setVisible(true);
+        infoArea.setTabSize(2);
+        clearInfoArea();
+        infoPanel.add(infoArea);
+
+        JPanel bottomPanel = new JPanel();
+        add(bottomPanel, BorderLayout.SOUTH);
 
 		img.setIcon(ImageManager.getImage(null));
         img.setPreferredSize(new Dimension(ImageManager.getImageWidth(), ImageManager.getImageHeight()));
@@ -76,18 +83,32 @@ public class Application extends JFrame {
         inputArea.setText("3 3 1 2 3 4 5 6 7 8 9");
 	}
 
+    protected void clearInfoArea() {
+        infoArea.setText("");
+    }
+
+    protected void addInfo(String s) {
+        String text = infoArea.getText();
+        if (!text.isEmpty()) {
+            text += "\n";
+        }
+        infoArea.setText(text + s);
+    }
+
     public class ApplyButtonListener implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            clearInfoArea();
             Scanner sc = new Scanner(inputArea.getText());
             Problem problem = Problem.read(sc);
 
-            System.out.println(problem.toString());
+            addInfo(problem.toString());
 
             Solver solver = null;
             if (approxButton.isSelected()) {
-                System.out.println("Approx");
+                addInfo("Approximate algorithm:");
                 solver = new ApproximateOpenShopCMax(problem);
             } else if (geneticButton.isSelected()) {
                 System.out.println("Genetic");
@@ -99,7 +120,8 @@ public class Application extends JFrame {
             if (solver != null) {
                 Schedule schedule = solver.generateSchedule();
                 img.setIcon(ImageManager.getImage(schedule));
-                System.out.println(schedule.toString());
+                addInfo(schedule.toString());
+                addInfo("Quality:" + ((double)schedule.getTime()) / problem.getLowerBorderOfSolution());
             }
         }
     }

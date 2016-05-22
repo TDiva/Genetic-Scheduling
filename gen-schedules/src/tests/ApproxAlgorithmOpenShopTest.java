@@ -25,10 +25,10 @@ public class ApproxAlgorithmOpenShopTest {
             "TIME(sec)"         // 6
     };
 
-    public static final int NUM_TESTS = 1;
+    public static final int NUM_TESTS = 100;
     public static final int[] NUM_JOBS = {3, 5, 10, 20, 50, 100};
     public static final int[] NUM_MACHINES = {3, 5, 10, 20, 50, 100};
-    public static final int[] MAX_VALUES = {10, 100, 1000, 10000};
+    public static final int[] MAX_VALUES = {10, 100, 1000};
 
     private CSVResponseWriter writer;
 
@@ -38,7 +38,7 @@ public class ApproxAlgorithmOpenShopTest {
         long index = 0;
 
         try {
-            writer = new CSVResponseWriter("results/approx/simple-longfix.csv", HEADERS);
+            writer = new CSVResponseWriter("results/approx/all.csv", HEADERS);
             StopWatch sw = new StopWatch();
             Map<String, String> result = new HashMap<>();
             for (int jobs : NUM_JOBS) {

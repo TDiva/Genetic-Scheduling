@@ -2,7 +2,7 @@ package problem;
 
 import java.util.*;
 
-public class Job {
+public class Job implements Cloneable {
 
 	List<Integer> operations;
 

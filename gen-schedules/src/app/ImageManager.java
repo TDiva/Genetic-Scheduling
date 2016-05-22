@@ -47,7 +47,7 @@ public class ImageManager {
         long maxX = (long) (WIDTH / xCoeff + 0.5) + 1;
 
         int numQ = WIDTH / 50;
-        int deltaX = (int) (maxX / numQ);
+        int deltaX = numQ > maxX ? 1 : (int) (maxX / numQ);
 
         for (int i = 0; i < maxX; i += deltaX) {
             int pos = (int) (i * xCoeff + MARGIN);

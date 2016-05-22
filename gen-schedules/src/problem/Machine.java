@@ -8,7 +8,7 @@ import java.util.TreeMap;
 /**
  * Created by Tatiyana Domanova on 5/20/14.
  */
-public class Machine {
+public class Machine implements Cloneable{
 
 	private int index;
 	private Map<Long, Job> schedule;
@@ -91,4 +91,6 @@ public class Machine {
 		}
 		return sb.toString();
 	}
+
+
 }

@@ -32,6 +32,11 @@ public class CSVResponseWriter implements Closeable {
         }
     }
 
+    public CSVResponseWriter(String filename, String headers[], int flush) {
+        this(filename, headers);
+        MAX_TO_FLUSH = flush;
+    }
+
     public void writeLine(String[] line) {
         csvWriter.writeNext(line);
         index++;
