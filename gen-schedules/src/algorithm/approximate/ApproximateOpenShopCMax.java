@@ -28,7 +28,11 @@ public class ApproximateOpenShopCMax extends BaseSolver implements Solver {
 
 					@Override
 					public int compare(Machine arg0, Machine arg1) {
-						return Long.valueOf(arg0.getTime()).compareTo(arg1.getTime());
+						int res = Long.valueOf(arg0.getTime()).compareTo(arg1.getTime());
+                        if (res == 0) {
+                            return arg0.getIndex() - arg1.getIndex();
+                        }
+                        return res;
 					}
 
 				});

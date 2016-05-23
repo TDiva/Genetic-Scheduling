@@ -2,6 +2,11 @@ package tests;
 
 import algorithm.Solver;
 import algorithm.genetic.GeneticOpenShopCMax;
+import algorithm.genetic.core.crossover.CrossoverManager;
+import algorithm.genetic.core.crossover.selection.ParentingManager;
+import algorithm.genetic.core.makespan.MakespanManager;
+import algorithm.genetic.core.mutation.MutationManager;
+import algorithm.genetic.core.selection.SelectionManager;
 import org.apache.commons.lang.time.StopWatch;
 import org.junit.Test;
 import problem.Problem;
@@ -40,7 +45,7 @@ public class GeneticIterativeOpenShopTest {
 
     @Test
     public void test() {
-        long numTests = NUM_TESTS  * MAX_VALUES.length *
+        long numTests = NUM_TESTS * MAX_VALUES.length *
                 ((NUM_JOBS.length + 1) * NUM_MACHINES.length) / 2 *
                 MUTATION.length * POPULATION_SIZE.length * ITERATIONS.length;
         long index = 0;
@@ -61,14 +66,24 @@ public class GeneticIterativeOpenShopTest {
                             long est = p.getLowerBorderOfSolution();
                             result.put(HEADERS[7], String.valueOf(est));
 
-                            for (int popSize: POPULATION_SIZE) {
+                            for (int popSize : POPULATION_SIZE) {
                                 result.put(HEADERS[3], String.valueOf(popSize));
-                                for (double mutation: MUTATION) {
+                                for (double mutation : MUTATION) {
                                     result.put(HEADERS[4], String.format("%.1f", mutation));
-                                    for (int iterations: ITERATIONS) {
+                                    for (int iterations : ITERATIONS) {
                                         result.put(HEADERS[5], String.valueOf(iterations));
 
-                                        Solver s = new GeneticOpenShopCMax(p, mutation, popSize, iterations);
+                                        Solver s = new GeneticOpenShopCMax(
+                                                p,
+                                                MakespanManager.MakespanManagerType.OPEN_SHOP_SIMPLE,
+                                                ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
+                                                CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
+                                                MutationManager.MutationManagerType.SWAP_MUTATION,
+                                                mutation,
+                                                SelectionManager.SelectionManagerType.ELITE_SELECTION,
+                                                popSize,
+                                                iterations,
+                                                0);
                                         sw.start();
                                         Schedule schedule = s.generateSchedule();
                                         sw.stop();
@@ -82,7 +97,7 @@ public class GeneticIterativeOpenShopTest {
                                         writer.writeLine(result);
                                         sw.reset();
 
-                                        index ++;
+                                        index++;
                                         System.out.print("\rRunning tests: " + index + "/" + numTests);
                                     }
                                 }

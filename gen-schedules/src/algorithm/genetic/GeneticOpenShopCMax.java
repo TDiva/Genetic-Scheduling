@@ -9,6 +9,7 @@ import algorithm.genetic.core.crossover.selection.ParentingManager;
 import algorithm.genetic.core.evolution.EvolutionManager;
 import algorithm.genetic.core.makespan.MakespanManager;
 import algorithm.genetic.core.makespan.OpenShopMakespan;
+import algorithm.genetic.core.makespan.OpenShopSimpleMakespan;
 import algorithm.genetic.core.mutation.MutationManager;
 import algorithm.genetic.core.mutation.SwapMutation;
 import algorithm.genetic.core.selection.EliteSelection;
@@ -34,72 +35,55 @@ public class GeneticOpenShopCMax extends BaseSolver implements Solver {
     private double equalityCoeff;
 
     public GeneticOpenShopCMax(Problem p,
-                               double mutation,
-                               int sizeOfPopulation,
-                               int maxIterations) {
-        this(p,
-                ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
-                CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
-                MutationManager.MutationManagerType.SWAP_MUTATION,
-                mutation,
-                SelectionManager.SelectionManagerType.ELITE_SELECTION,
-                sizeOfPopulation,
-                maxIterations,
-                0d
-                );
-    }
-
-    public GeneticOpenShopCMax(Problem p,
-                               double mutation,
-                               int sizeOfPopulation,
-                               double diffCoeff) {
-        this(p,
-                ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
-                CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
-                MutationManager.MutationManagerType.SWAP_MUTATION,
-                mutation,
-                SelectionManager.SelectionManagerType.ELITE_SELECTION,
-                sizeOfPopulation,
-                0,
-                diffCoeff
-        );
-    }
-
-    public GeneticOpenShopCMax(Problem p,
-                               ParentingManager.ParentingManagerType parentingManagerType,
-                               CrossoverManager.CrossoverManagerType crossoverManagerType,
-                               MutationManager.MutationManagerType mutationManagerType,
-                               double mutation,
-                               SelectionManager.SelectionManagerType selectionManagerType,
-                               int sizeOfPopulation,
-                               int iterations,
-                               double equalityCoeff
-                               ) {
+                                MakespanManager.MakespanManagerType makespanManagerType,
+                                ParentingManager.ParentingManagerType parentingManagerType,
+                                CrossoverManager.CrossoverManagerType crossoverManagerType,
+                                MutationManager.MutationManagerType mutationManagerType,
+                                double mutation,
+                                SelectionManager.SelectionManagerType selectionManagerType,
+                                int sizeOfPopulation,
+                                int iterations,
+                                double equalityCoeff
+    ) {
         super(p);
-        makespanManager = new OpenShopMakespan(p);
+        switch (makespanManagerType) {
+            case OPEN_SHOP_SIMPLE:
+                makespanManager = new OpenShopSimpleMakespan(p);
+                break;
+            case OPEN_SHOP_MODIFIED:
+                makespanManager = new OpenShopMakespan(p);
+                break;
+            default:
+                throw new UnsupportedOperationException("Makespan manager type " + makespanManagerType.name() + " is not supported");
+        }
+
         switch (parentingManagerType) {
             case CROSSOVER_WHEEL:
                 this.parentingManager = new CrossoverWheel();
                 break;
-            default: throw new UnsupportedOperationException("Parenting manager type " + parentingManagerType.name() + " is not supported");
+            default:
+                throw new UnsupportedOperationException("Parenting manager type " + parentingManagerType.name() + " is not supported");
         }
         switch (crossoverManagerType) {
             case RANDOM_CROSSOVER:
                 this.crossoverManager = new RandomCrossover(parentingManager);
                 break;
-            default: throw new UnsupportedOperationException("Crossover manager type " + crossoverManagerType.name() + " is not supported");
+            default:
+                throw new UnsupportedOperationException("Crossover manager type " + crossoverManagerType.name() + " is not supported");
         }
         switch (mutationManagerType) {
             case SWAP_MUTATION:
                 this.mutationManager = new SwapMutation(mutation);
                 break;
-            default: throw new UnsupportedOperationException("Selection manager type " + selectionManagerType.name() + " is not supported");
+            default:
+                throw new UnsupportedOperationException("Selection manager type " + selectionManagerType.name() + " is not supported");
         }
         switch (selectionManagerType) {
             case ELITE_SELECTION:
                 this.selectionManager = new EliteSelection(makespanManager);
                 break;
-            default: throw new UnsupportedOperationException("Selection manager type " + selectionManagerType.name() + " is not supported");
+            default:
+                throw new UnsupportedOperationException("Selection manager type " + selectionManagerType.name() + " is not supported");
         }
         evolutionManager = new EvolutionManager(crossoverManager, mutationManager, selectionManager, makespanManager);
 

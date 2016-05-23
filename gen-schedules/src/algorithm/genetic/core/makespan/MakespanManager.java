@@ -16,4 +16,9 @@ public interface MakespanManager {
 
 	int getOperationMachine(int index);
 
+    enum MakespanManagerType {
+        OPEN_SHOP_SIMPLE,
+        OPEN_SHOP_MODIFIED
+    }
+
 }

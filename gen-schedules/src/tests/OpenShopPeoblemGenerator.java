@@ -2,6 +2,7 @@ package tests;
 
 import problem.Problem;
 
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -21,7 +22,33 @@ public class OpenShopPeoblemGenerator {
         return new Problem(numMachines, numJobs, op);
     }
 
-    public static  Problem getProblem(int[][] operations) {
+    public static Problem getDiagonalDominateProblem(int n, int maxLenght) {
+        int[][] op = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                op[i][j] = r.nextInt(maxLenght);
+            }
+        }
+        for (int i = 0; i<n; i++) {
+            op[i][i] = Arrays.stream(op[i]).sum()*100;
+        }
+        return new Problem(n, n, op);
+    }
+
+    public static Problem getDiagonalSpreadedProblem(int n, int maxLength) {
+        int[][] op = new int[n][n];
+        for (int i = 0; i<n; i++) {
+            op[0][i] += r.nextInt(maxLength)+1;
+        }
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                op[i][j] = op[i-1][(j-1+n)%n];
+            }
+        }
+        return new Problem(n, n, op);
+    }
+
+    public static Problem getProblem(int[][] operations) {
         int nJobs = operations.length;
         if (nJobs == 0) {
             throw new IllegalArgumentException("Problem should have at least 1 job!");
@@ -30,7 +57,7 @@ public class OpenShopPeoblemGenerator {
         if (nMachines == 0) {
             throw new IllegalArgumentException("Problem should have at least 1 machine!");
         }
-        for (int i = 0; i<nJobs; i++) {
+        for (int i = 0; i < nJobs; i++) {
             if (operations[i].length != nMachines) {
                 throw new IllegalArgumentException("Problem should have at equal line width!");
             }
