@@ -37,14 +37,23 @@ public class BaseChromosome implements Cloneable {
 		genom.set(g2, buf);
 	}
 
-	public boolean equals(Object o) {
-		if (o instanceof BaseChromosome) {
-			return genom.equals(((BaseChromosome) o).genom);
-		}
-		return false;
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-	public BaseChromosome clone() {
+        BaseChromosome that = (BaseChromosome) o;
+
+        return genom != null ? genom.equals(that.genom) : that.genom == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return genom != null ? genom.hashCode() : 0;
+    }
+
+    public BaseChromosome clone() {
 		return new BaseChromosome(getGenom());
 	}
 

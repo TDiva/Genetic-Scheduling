@@ -1,16 +1,11 @@
 package algorithm.genetic.core.crossover;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
+import algorithm.genetic.core.Population;
 import algorithm.genetic.core.chromosomes.BaseChromosome;
 import algorithm.genetic.core.crossover.selection.ParentingManager;
 import org.javatuples.Pair;
 
-import algorithm.genetic.core.Population;
+import java.util.*;
 
 public class RandomCrossover implements CrossoverManager {
 
@@ -35,7 +30,7 @@ public class RandomCrossover implements CrossoverManager {
 			BaseChromosome p1, BaseChromosome p2, int mask) {
 
 		if (p1.equals(p2)) {
-			return new Pair<>(p1, p2);
+			return new Pair<>(p1.clone(), p2.clone());
 		}
 
 		List<Integer> c1 = new ArrayList<Integer>();

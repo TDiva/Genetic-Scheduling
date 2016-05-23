@@ -1,11 +1,11 @@
 package algorithm.genetic.core.evolution;
 
-import algorithm.genetic.core.makespan.MakespanManager;
-import algorithm.genetic.modification.ModificationManager;
 import algorithm.genetic.core.Population;
 import algorithm.genetic.core.crossover.CrossoverManager;
+import algorithm.genetic.core.makespan.MakespanManager;
 import algorithm.genetic.core.mutation.MutationManager;
 import algorithm.genetic.core.selection.SelectionManager;
+import algorithm.genetic.modification.ModificationManager;
 
 public class LamarkaEvolutionManager extends EvolutionManager {
 
@@ -18,12 +18,12 @@ public class LamarkaEvolutionManager extends EvolutionManager {
 	}
 
 	@Override
-	protected Population evolution(Population p, int size) {
+	protected Population evolution(Population p) {
 		Population ch = crossoverManager.crossover(p);
 		mutationManager.mutation(ch);
 		modificationManager.modify(ch);
-		p.getIndividuals().addAll(ch.getIndividuals());
-		return selectionManager.selection(p, size);
+		ch.getIndividuals().addAll(p.getIndividuals());
+		return selectionManager.selection(p, p.getIndividuals().size());
 	}
 
 }

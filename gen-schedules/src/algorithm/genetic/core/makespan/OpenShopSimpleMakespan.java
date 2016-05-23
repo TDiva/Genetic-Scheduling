@@ -32,7 +32,8 @@ public class OpenShopSimpleMakespan implements MakespanManager {
 
     @Override
     public long makespan(BaseChromosome ch) {
-        return getCachedScheduleTime(ch);
+//        return getCachedScheduleTime(ch);
+        return translate(ch).getTime();
     }
 
     public Schedule translate(BaseChromosome chromosome) {

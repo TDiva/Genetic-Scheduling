@@ -8,73 +8,86 @@ import algorithm.genetic.core.mutation.MutationManager;
 import algorithm.genetic.core.selection.SelectionManager;
 import problem.Schedule;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class EvolutionManager {
 
-	public int iterations = 0;
+    public int iterations = 0;
 
-	protected CrossoverManager crossoverManager;
-	protected MutationManager mutationManager;
-	protected SelectionManager selectionManager;
-	protected MakespanManager makespanManager;
+    protected CrossoverManager crossoverManager;
+    protected MutationManager mutationManager;
+    protected SelectionManager selectionManager;
+    protected MakespanManager makespanManager;
 
-	protected final Comparator<BaseChromosome> chComp = new Comparator<BaseChromosome>() {
+    List<BaseChromosome> bests;
 
-		@Override
-		public int compare(BaseChromosome c1, BaseChromosome c2) {
-			return Long.valueOf(makespanManager.makespan(c1)).compareTo(makespanManager.makespan(c2));
-		}
-	};
+    protected final Comparator<BaseChromosome> chComp = new Comparator<BaseChromosome>() {
 
-	public EvolutionManager(CrossoverManager cr, MutationManager mt,
-			SelectionManager slt, MakespanManager pr) {
-		crossoverManager = cr;
-		mutationManager = mt;
-		selectionManager = slt;
-		makespanManager = pr;
-	}
+        @Override
+        public int compare(BaseChromosome c1, BaseChromosome c2) {
+            return Long.valueOf(makespanManager.makespan(c1)).compareTo(makespanManager.makespan(c2));
+        }
+    };
 
-	protected Population evolution(Population p, int size) {
-		Population ch = crossoverManager.crossover(p);
-		mutationManager.mutation(ch);
-		p.getIndividuals().addAll(ch.getIndividuals());
-		return selectionManager.selection(p, size);
-	}
+    public EvolutionManager(CrossoverManager cr, MutationManager mt,
+                            SelectionManager slt, MakespanManager pr) {
+        crossoverManager = cr;
+        mutationManager = mt;
+        selectionManager = slt;
+        makespanManager = pr;
+    }
 
-	public Schedule generateSchedule(int iterations, int size) {
-		this.iterations = iterations;
-		Population p = makespanManager.createPopulation(size);
+    protected Population evolution(Population p) {
+        Population ch = crossoverManager.crossover(p);
+        mutationManager.mutation(ch);
+        ch.getIndividuals().addAll(p.getIndividuals());
+        return selectionManager.selection(ch, p.getIndividuals().size());
+    }
 
-		for (int i = 0; i < iterations; i++) {
-			p = evolution(p, size);
-		}
+    public Schedule generateSchedule(int iterations, int size) {
+        this.iterations = iterations;
+        bests = new ArrayList<>();
+        Population p = makespanManager.createPopulation(size);
 
-		BaseChromosome best = Collections.min(p.getIndividuals(), chComp);
-		// System.out.println("\nBest\t" + best);
+        for (int i = 0; i < iterations; i++) {
+            Population p1 = evolution(p);
+            bests.add(p1.getBest(makespanManager));
+            p = p1;
+        }
 
-		return makespanManager.translate(best);
-	}
+        BaseChromosome best = p.getBest(makespanManager);
 
-	public Schedule generateSchedule(double coef, int size) {
-		int it = 0;
-		Population p = makespanManager.createPopulation(size);
-		BaseChromosome bestc = null, worstc = null;
-		long best = 0, worst = 0;
-		do {
-			it++;
-			p = evolution(p, size);
-			bestc = Collections.min(p.getIndividuals(), chComp);
-			worstc = Collections.max(p.getIndividuals(), chComp);
-			best = makespanManager.makespan(bestc);
-			worst = makespanManager.makespan(worstc);
-		} while (((double) (worst - best)) / worst > coef);
+        return makespanManager.translate(best);
+    }
 
-		this.iterations = it;
-		BaseChromosome bestC = Collections.min(p.getIndividuals(), chComp);
-		// System.out.println("\nBest\t" + bestC);
-		return makespanManager.translate(bestC);
+    public Schedule generateSchedule(double coef, int size) {
+        int it = 0;
+        bests = new ArrayList<>();
+        Population p = makespanManager.createPopulation(size);
+        BaseChromosome bestc = null, worstc = null;
+        long best = 0, worst = 0;
+        do {
+            it++;
+            p = evolution(p);
+            bestc = Collections.min(p.getIndividuals(), chComp);
+            worstc = Collections.max(p.getIndividuals(), chComp);
+            best = makespanManager.makespan(bestc);
+            worst = makespanManager.makespan(worstc);
+            bests.add(bestc);
+        } while (((double) (worst - best)) / worst > coef);
 
-	}
+        this.iterations = it;
+        BaseChromosome bestC = Collections.min(p.getIndividuals(), chComp);
+        // System.out.println("\nBest\t" + bestC);
+        return makespanManager.translate(bestC);
+
+    }
+
+    public Schedule getBestAtIteration(int x) {
+        if (x > bests.size()) return null;
+        return makespanManager.translate(bests.get(x-1));
+    }
 }

@@ -104,4 +104,8 @@ public class GeneticOpenShopCMax extends BaseSolver implements Solver {
             return evolutionManager.generateSchedule(equalityCoeff, sizeOfPopulation);
         }
     }
+
+    public Schedule getBestAtIteration(int x) {
+        return evolutionManager.getBestAtIteration(x);
+    }
 }

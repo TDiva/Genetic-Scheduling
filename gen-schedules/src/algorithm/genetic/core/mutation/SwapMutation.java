@@ -1,9 +1,9 @@
 package algorithm.genetic.core.mutation;
 
-import java.util.Random;
-
-import algorithm.genetic.core.chromosomes.BaseChromosome;
 import algorithm.genetic.core.Population;
+import algorithm.genetic.core.chromosomes.BaseChromosome;
+
+import java.util.Random;
 
 public class SwapMutation implements MutationManager {
 

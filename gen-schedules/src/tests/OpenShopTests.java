@@ -1,7 +1,6 @@
 package tests;
 
 import algorithm.approximate.ApproximateOpenShopCMax;
-import algorithm.genetic.GeneticOpenShopCMax;
 import algorithm.genetic.core.crossover.CrossoverManager;
 import algorithm.genetic.core.crossover.HybridCrossover;
 import algorithm.genetic.core.crossover.RandomCrossover;
@@ -60,66 +59,6 @@ public class OpenShopTests {
         };
         return new Problem(MACHINES, JOBS, op);
     }
-
-	@Test
-	public void testGenetic() {
-		Problem p = getProblem();
-		System.out.println(String.format(
-				"Open Shop: m = %d, n = %d, max = %d\n", MACHINES, JOBS,
-				MAX_LENGTH));
-        System.out.println(p);
-        System.out.println("**********");
-		ApproximateOpenShopCMax approximate = new ApproximateOpenShopCMax(p);
-
-		long startTime = System.currentTimeMillis();
-		Schedule c1 = approximate.generateSchedule();
-		long endTime = System.currentTimeMillis();
-		System.out.println(String.format("Approximate: %d \n\t time: %d mls ",
-				c1.getTime(), endTime - startTime));
-        System.out.println(c1);
-        System.out.println("**********");
-
-		GeneticOpenShopCMax geneticIterative = new GeneticOpenShopCMax(p,
-				MUTATION,
-				SIZE_OF_POPULATION,
-                EVOLUTION_ITERATIONS);
-
-		startTime = System.currentTimeMillis();
-		Schedule c2 = geneticIterative.generateSchedule();
-		endTime = System.currentTimeMillis();
-		System.out
-				.println(String
-						.format("Iterative evo: %d \n\t size: %d, mutation: %.2f, iterations: %d, time: %d mls",
-								c2.getTime(), SIZE_OF_POPULATION, MUTATION,
-								EVOLUTION_ITERATIONS, endTime - startTime));
-        System.out.println(c2);
-        System.out.println("**********");
-
-		GeneticOpenShopCMax geneticStohastic = new GeneticOpenShopCMax(p,
-				MUTATION,
-				SIZE_OF_POPULATION,
-                EVOLUTION_COEFFICIENT);
-
-		startTime = System.currentTimeMillis();
-		Schedule c3 = geneticStohastic.generateSchedule();
-		endTime = System.currentTimeMillis();
-		System.out
-				.println(String
-						.format("Stohastic evo: %d \n\t size: %d, mutation: %.2f, iterations: %d, time: %d mls",
-								c3.getTime(), SIZE_OF_POPULATION, MUTATION,
-								geneticStohastic.getNumberOfIterations(), endTime - startTime));
-        System.out.println(c3);
-        System.out.println("**********");
-
-        long bord = p.getLowerBorderOfSolution();
-
-		System.out.println(String.format(
-				"Quality (from lower border = %d): \n\t approx: %d%%\n\t iterative: %d%% \n\t stohastic: %d%%",
-				bord,
-                c1.getTime() * 100 / bord,
-                (c2.getTime()) * 100 / bord,
-				(c3.getTime()) * 100 / bord));
-	}
 
 	@Test
 	public void testHybrid() {
