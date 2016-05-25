@@ -31,19 +31,43 @@ public class GeneticOpenShopCMax extends BaseSolver implements Solver {
     private EvolutionManager evolutionManager;
 
     private int sizeOfPopulation;
+
     private int maxIterations;
+
     private double equalityCoeff;
+    private int timesToRepeat;
 
     public GeneticOpenShopCMax(Problem p,
-                                MakespanManager.MakespanManagerType makespanManagerType,
-                                ParentingManager.ParentingManagerType parentingManagerType,
-                                CrossoverManager.CrossoverManagerType crossoverManagerType,
-                                MutationManager.MutationManagerType mutationManagerType,
-                                double mutation,
-                                SelectionManager.SelectionManagerType selectionManagerType,
-                                int sizeOfPopulation,
-                                int iterations,
-                                double equalityCoeff
+                               MakespanManager.MakespanManagerType makespanManagerType,
+                               ParentingManager.ParentingManagerType parentingManagerType,
+                               CrossoverManager.CrossoverManagerType crossoverManagerType,
+                               MutationManager.MutationManagerType mutationManagerType,
+                               double mutation,
+                               SelectionManager.SelectionManagerType selectionManagerType,
+                               int sizeOfPopulation,
+                               int iterations,
+                               double equalityCoeff
+
+    ) {
+        this(p, makespanManagerType, parentingManagerType, crossoverManagerType, mutationManagerType, mutation,
+                selectionManagerType,
+                sizeOfPopulation,
+                iterations,
+                equalityCoeff,
+        1);
+    }
+
+    public GeneticOpenShopCMax(Problem p,
+                               MakespanManager.MakespanManagerType makespanManagerType,
+                               ParentingManager.ParentingManagerType parentingManagerType,
+                               CrossoverManager.CrossoverManagerType crossoverManagerType,
+                               MutationManager.MutationManagerType mutationManagerType,
+                               double mutation,
+                               SelectionManager.SelectionManagerType selectionManagerType,
+                               int sizeOfPopulation,
+                               int iterations,
+                               double equalityCoeff,
+                               int timesToRepeat
     ) {
         super(p);
         switch (makespanManagerType) {
@@ -90,6 +114,7 @@ public class GeneticOpenShopCMax extends BaseSolver implements Solver {
         this.sizeOfPopulation = sizeOfPopulation;
         this.maxIterations = iterations;
         this.equalityCoeff = equalityCoeff;
+        this.timesToRepeat = timesToRepeat;
     }
 
     public int getNumberOfIterations() {
@@ -101,7 +126,7 @@ public class GeneticOpenShopCMax extends BaseSolver implements Solver {
         if (maxIterations > 0) {
             return evolutionManager.generateSchedule(maxIterations, sizeOfPopulation);
         } else {
-            return evolutionManager.generateSchedule(equalityCoeff, sizeOfPopulation);
+            return evolutionManager.generateSchedule(equalityCoeff, timesToRepeat, sizeOfPopulation);
         }
     }
 

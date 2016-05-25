@@ -75,7 +75,8 @@ public class Machine implements Cloneable{
             job.processZeroOperation(index);
             return;
         }
-        time = job.findGap(time, length);
+//        time = job.findGap(time, length);
+        time = Math.max(time, job.getFreeTime());
         schedule.put(time, job);
         job.processOperation(index, time);
         time += job.getOperationLength(index);

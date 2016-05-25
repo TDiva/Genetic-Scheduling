@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by TDiva on 5/18/16.
@@ -33,13 +34,13 @@ public class GeneticIterativeOpenShopTest {
             "TIME(sec)"         // 8
     };
 
-    public static final int NUM_TESTS = 1000;
-    public static final int[] NUM_JOBS = {3};
-    public static final int[] NUM_MACHINES = {3};
+    public static final int NUM_TESTS = 5;
+    public static final int[] NUM_JOBS = {3, 5, 10, 20, 50, 100};
+    public static final int[] NUM_MACHINES = {3, 5, 10, 20, 50, 100};
     public static final int[] MAX_VALUES = {10, 100, 1000};
     public static final int[] POPULATION_SIZE = {20};
     public static final double[] MUTATION = {0.05};
-    public static final int[] ITERATIONS = {5};
+    public static final int[] ITERATIONS = {100};
 
     private CSVResponseWriter writer;
 
@@ -87,7 +88,7 @@ public class GeneticIterativeOpenShopTest {
                                     sw.stop();
 
                                     long res1 = s.getBestAtIteration(1).getTime();
-                                    long res10 = s.getBestAtIteration(2).getTime();
+                                    long res10 = s.getBestAtIteration(10).getTime();
                                     long res100 = schedule.getTime();
 
 
@@ -144,6 +145,57 @@ public class GeneticIterativeOpenShopTest {
             assertFalse("test " + i + "\t" + res1 + ">=" + res2, res1 < res2);
             System.out.println("****");
         }
+    }
+
+    @Test
+    public  void test2() {
+        Problem p = OpenShopPeoblemGenerator.getProblem(5,5,10);
+        GeneticOpenShopCMax sim = new GeneticOpenShopCMax(
+                p,
+                MakespanManager.MakespanManagerType.OPEN_SHOP_SIMPLE,
+                ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
+                CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
+                MutationManager.MutationManagerType.SWAP_MUTATION,
+                0.05,
+                SelectionManager.SelectionManagerType.ELITE_SELECTION,
+                3,
+                1,
+                0);
+
+        GeneticOpenShopCMax mod = new GeneticOpenShopCMax(
+                p,
+                MakespanManager.MakespanManagerType.OPEN_SHOP_SIMPLE,
+                ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
+                CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
+                MutationManager.MutationManagerType.SWAP_MUTATION,
+                0.05,
+                SelectionManager.SelectionManagerType.ELITE_SELECTION,
+                3,
+                1,
+                0);
+
+
+        System.out.println(p);
+        System.out.println("=====================");
+        StopWatch sw = new StopWatch();
+        sw.start();
+        Schedule s1 = sim.generateSchedule();
+        sw.stop();
+        System.out.println("Simple res");
+        System.out.println(s1);
+        System.out.println(sw.getTime());
+        long t1 = sw.getTime();
+        System.out.println("---------------------");
+        sw.reset();
+        sw.start();
+        Schedule s2 = mod.generateSchedule();
+        sw.stop();
+        System.out.println("Modified res");
+        System.out.println(s2);
+        System.out.println(sw.getTime());
+        System.out.println("---------------------");
+        assertTrue(p.getLowerBorderOfSolution() <= s1.getTime());
+        assertTrue(p.getLowerBorderOfSolution() <= s2.getTime());
     }
 
 }

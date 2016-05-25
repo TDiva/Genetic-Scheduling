@@ -86,6 +86,34 @@ public class EvolutionManager {
 
     }
 
+    public Schedule generateSchedule(double coef, int timesToRepeat, int size) {
+        bests = new ArrayList<>();
+        Population p = makespanManager.createPopulation(size);
+        BaseChromosome bestc = null, worstc = null;
+        long best = 0, worst = 0;
+        int criteria = 0;
+        do {
+            p = evolution(p);
+            bestc = Collections.min(p.getIndividuals(), chComp);
+            worstc = Collections.max(p.getIndividuals(), chComp);
+            best = makespanManager.makespan(bestc);
+            worst = makespanManager.makespan(worstc);
+            bests.add(bestc);
+            boolean foundBetter = ((double) (worst - best)) / worst > coef;
+            if (!foundBetter) {
+                criteria ++;
+            } else {
+                criteria = 0;
+            }
+        } while (criteria < timesToRepeat);
+
+        this.iterations = bests.size();
+        BaseChromosome bestC = Collections.min(p.getIndividuals(), chComp);
+        // System.out.println("\nBest\t" + bestC);
+        return makespanManager.translate(bestC);
+
+    }
+
     public Schedule getBestAtIteration(int x) {
         if (x > bests.size()) return null;
         return makespanManager.translate(bests.get(x-1));
