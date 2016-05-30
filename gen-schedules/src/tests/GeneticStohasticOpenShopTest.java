@@ -51,7 +51,7 @@ public class GeneticStohasticOpenShopTest {
         long index = 0;
 
         try {
-            writer = new CSVResponseWriter("results/genetic/stohastic-simple.csv", HEADERS, 10);
+            writer = new CSVResponseWriter("results/genetic/stohastic-modified.csv", HEADERS, 10);
             StopWatch sw = new StopWatch();
             Map<String, String> result = new HashMap<>();
 
@@ -77,7 +77,7 @@ public class GeneticStohasticOpenShopTest {
                                         result.put(HEADERS[5], String.format("%.2f", mutation));
                                         GeneticOpenShopCMax s = new GeneticOpenShopCMax(
                                                 p,
-                                                MakespanManager.MakespanManagerType.OPEN_SHOP_SIMPLE,
+                                                MakespanManager.MakespanManagerType.OPEN_SHOP_MODIFIED,
                                                 ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
                                                 CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
                                                 MutationManager.MutationManagerType.SWAP_MUTATION,
