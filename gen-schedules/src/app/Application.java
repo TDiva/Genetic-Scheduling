@@ -33,6 +33,9 @@ public class Application extends JFrame {
     protected JTextField mutationF = new JTextField("0.05");
     protected JTextField iterationsF = new JTextField("100");
 
+    protected JRadioButton simple = new JRadioButton("Simple Scheduling");
+    protected JRadioButton modified = new JRadioButton("Optimized Scheduling");
+
     protected JPanel geneticParamsPanel = new JPanel();
 
     protected JTextArea infoArea = new JTextArea();
@@ -57,7 +60,6 @@ public class Application extends JFrame {
         inputPanel.add(inputArea, BorderLayout.NORTH);
 
         approxButton.setSelected(true);
-        geneticButton.addActionListener(new SelectGeneticAlgListener());
 
         ButtonGroup selectAlg = new ButtonGroup();
         selectAlg.add(bruteButton);
@@ -72,7 +74,7 @@ public class Application extends JFrame {
         selectAlgPanel.add(geneticButton);
         butAlgPanel.add(selectAlgPanel, BorderLayout.NORTH);
 
-        geneticParamsPanel.setLayout(new GridLayout(3,1));
+        geneticParamsPanel.setLayout(new GridLayout(4,1));
         butAlgPanel.add(geneticParamsPanel, BorderLayout.CENTER);
 
         JPanel sop = new JPanel();
@@ -92,17 +94,17 @@ public class Application extends JFrame {
         iterationsF.setPreferredSize(new Dimension(50, 20));
         sop.add(iterationsF);
         geneticParamsPanel.add(sop);
+        geneticParamsPanel.setVisible(false);
 
         sop = new JPanel();
         sop.setLayout(new FlowLayout());
         ButtonGroup s1 = new ButtonGroup();
-        JRadioButton b1 = new JRadioButton("Simple scheduling");
-        sop.add(b1);
-        s1.add(b1);
-        b1 = new JRadioButton("Optimized scheduling");
-        sop.add(b1);
-        s1.add(b1);
-        butAlgPanel.add(sop, BorderLayout.SOUTH);
+        simple.setSelected(true);
+        sop.add(simple);
+        s1.add(simple);
+        sop.add(modified);
+        s1.add(modified);
+        geneticParamsPanel.add(sop);
 
         inputPanel.add(butAlgPanel,
                 BorderLayout.CENTER);
@@ -155,6 +157,11 @@ public class Application extends JFrame {
 
         // FIXME: for debug. remove in release
         inputArea.setText("3 3 1 2 3 4 5 6 7 8 9");
+
+        geneticButton.addActionListener((e) -> geneticParamsPanel.setVisible(true));
+        approxButton.addActionListener((e) -> geneticParamsPanel.setVisible(false));
+        bruteButton.addActionListener((e) -> geneticParamsPanel.setVisible(false));
+
     }
 
     protected void clearInfoArea() {
@@ -195,16 +202,35 @@ public class Application extends JFrame {
                 solver = new ApproximateOpenShopCMax(problem);
             } else if (geneticButton.isSelected()) {
                 addInfo("Genetic algorithm:");
+                MakespanManager.MakespanManagerType makespanManager = null;
+                if (simple.isSelected()) {
+                    makespanManager = MakespanManager.MakespanManagerType.OPEN_SHOP_SIMPLE;
+                    addInfo("Simple scheduling");
+                } else if (modified.isSelected()) {
+                    makespanManager = MakespanManager.MakespanManagerType.OPEN_SHOP_MODIFIED;
+                    addInfo("Optimized scheduling");
+                } else {
+                    addInfo("ERROR: select scheduling type");
+                    return;
+                }
+
+                int sizeOfPopulation = Integer.valueOf(sizeOfPopulationF.getText());
+                addInfo("Size of population: " + sizeOfPopulation);
+                double mutation = Double.valueOf(mutationF.getText());
+                addInfo(String.format("Mutation probability: %.2f", mutation));
+                int iterrations = Integer.valueOf(iterationsF.getText());
+                addInfo("Iterations: " + iterrations);
+
                 solver = new GeneticOpenShopCMax(
                         problem,
-                        MakespanManager.MakespanManagerType.OPEN_SHOP_SIMPLE,
+                        makespanManager,
                         ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
                         CrossoverManager.CrossoverManagerType.RANDOM_CROSSOVER,
                         MutationManager.MutationManagerType.SWAP_MUTATION,
-                        0,
+                        mutation,
                         SelectionManager.SelectionManagerType.ELITE_SELECTION,
-                        1,
-                        1,
+                        sizeOfPopulation,
+                        iterrations,
                         0);
             } else {
                 System.out.println("ERROR!");
@@ -218,14 +244,6 @@ public class Application extends JFrame {
             }
         }
     }
-
-    public class SelectGeneticAlgListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            System.out.println("Genetic options shoulf be shown");
-        }
-    }
-
 
     public static void main(String[] args) {
         Application app = new Application();
