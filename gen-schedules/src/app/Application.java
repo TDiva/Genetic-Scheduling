@@ -29,6 +29,12 @@ public class Application extends JFrame {
     protected JRadioButton geneticButton = new JRadioButton("Genetic");
     protected JRadioButton bruteButton = new JRadioButton("Brute");
 
+    protected JTextField sizeOfPopulationF = new JTextField("20");
+    protected JTextField mutationF = new JTextField("0.05");
+    protected JTextField iterationsF = new JTextField("100");
+
+    protected JPanel geneticParamsPanel = new JPanel();
+
     protected JTextArea infoArea = new JTextArea();
 
     public Application() {
@@ -59,10 +65,45 @@ public class Application extends JFrame {
         selectAlg.add(geneticButton);
 
         JPanel butAlgPanel = new JPanel();
-        butAlgPanel.setLayout(new FlowLayout());
-        butAlgPanel.add(bruteButton);
-        butAlgPanel.add(approxButton);
-        butAlgPanel.add(geneticButton);
+        butAlgPanel.setLayout(new BorderLayout());
+        JPanel selectAlgPanel = new JPanel();
+        selectAlgPanel.add(bruteButton);
+        selectAlgPanel.add(approxButton);
+        selectAlgPanel.add(geneticButton);
+        butAlgPanel.add(selectAlgPanel, BorderLayout.NORTH);
+
+        geneticParamsPanel.setLayout(new GridLayout(3,1));
+        butAlgPanel.add(geneticParamsPanel, BorderLayout.CENTER);
+
+        JPanel sop = new JPanel();
+        sop.add(new JLabel("Size of population: "));
+        sizeOfPopulationF.setPreferredSize(new Dimension(50, 20));
+        sop.add(sizeOfPopulationF);
+        geneticParamsPanel.add(sop);
+
+        sop = new JPanel();
+        sop.add(new JLabel("Mutstion prob.: "));
+        mutationF.setPreferredSize(new Dimension(50, 20));
+        sop.add(mutationF);
+        geneticParamsPanel.add(sop);
+
+        sop = new JPanel();
+        sop.add(new JLabel("Iterations: "));
+        iterationsF.setPreferredSize(new Dimension(50, 20));
+        sop.add(iterationsF);
+        geneticParamsPanel.add(sop);
+
+        sop = new JPanel();
+        sop.setLayout(new FlowLayout());
+        ButtonGroup s1 = new ButtonGroup();
+        JRadioButton b1 = new JRadioButton("Simple scheduling");
+        sop.add(b1);
+        s1.add(b1);
+        b1 = new JRadioButton("Optimized scheduling");
+        sop.add(b1);
+        s1.add(b1);
+        butAlgPanel.add(sop, BorderLayout.SOUTH);
+
         inputPanel.add(butAlgPanel,
                 BorderLayout.CENTER);
 
@@ -76,8 +117,10 @@ public class Application extends JFrame {
         infoArea.setEditable(false);
         infoArea.setVisible(true);
         infoArea.setTabSize(2);
+        JScrollPane scroll = new JScrollPane(infoArea);
+        scroll.setPreferredSize(new Dimension(400, 250));
         clearInfoArea();
-        infoPanel.add(infoArea);
+        infoPanel.add(scroll);
 
         JPanel bottomPanel = new JPanel();
         add(bottomPanel, BorderLayout.SOUTH);
@@ -86,7 +129,29 @@ public class Application extends JFrame {
         img.setPreferredSize(new Dimension(ImageManager.getImageWidth(), ImageManager.getImageHeight()));
         add(img, BorderLayout.EAST);
 
+        MenuBar mainMenu = new MenuBar();
+        Menu progremMenu = new Menu("Problem");
+        Menu solutionMenu = new Menu("Solution");
+        mainMenu.add(progremMenu);
+        mainMenu.add(solutionMenu);
+
+        MenuItem loadPr = new MenuItem("Load from file");
+        MenuItem savePr = new MenuItem("Save to file");
+        progremMenu.add(loadPr);
+        progremMenu.add(savePr);
+
+        MenuItem saveSolText = new MenuItem("Save to txt");
+        MenuItem saveSolIng = new MenuItem("Save image");
+        solutionMenu.add(saveSolText);
+        solutionMenu.add(saveSolIng);
+
+        Menu settings = new Menu("Settings");
+        mainMenu.add(settings);
+
+        setMenuBar(mainMenu);
+
         pack();
+        setResizable(false);
 
         // FIXME: for debug. remove in release
         inputArea.setText("3 3 1 2 3 4 5 6 7 8 9");
@@ -105,6 +170,7 @@ public class Application extends JFrame {
     }
 
     public static final int MAX_BRUTE = 10;
+
     public class ApplyButtonListener implements ActionListener {
 
         @Override
@@ -118,8 +184,8 @@ public class Application extends JFrame {
             Solver solver = null;
             if (bruteButton.isSelected()) {
                 addInfo("Brute algorithm:");
-                if (problem.getNumberOfMachines()*problem.getNumberOfJobs() > MAX_BRUTE) {
-                    addInfo("Cannot proceed: \nnumber of operations exceed max = " + MAX_BRUTE );
+                if (problem.getNumberOfMachines() * problem.getNumberOfJobs() > MAX_BRUTE) {
+                    addInfo("Cannot proceed: \nnumber of operations exceed max = " + MAX_BRUTE);
                     addInfo("Solution will take too much time. \nTry approximate of genetic algorithm");
                     return;
                 }
@@ -129,7 +195,7 @@ public class Application extends JFrame {
                 solver = new ApproximateOpenShopCMax(problem);
             } else if (geneticButton.isSelected()) {
                 addInfo("Genetic algorithm:");
-                solver =  new GeneticOpenShopCMax(
+                solver = new GeneticOpenShopCMax(
                         problem,
                         MakespanManager.MakespanManagerType.OPEN_SHOP_SIMPLE,
                         ParentingManager.ParentingManagerType.CROSSOVER_WHEEL,
