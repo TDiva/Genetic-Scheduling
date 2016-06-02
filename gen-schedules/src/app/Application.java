@@ -164,9 +164,6 @@ public class Application extends JFrame {
         pack();
         setResizable(false);
 
-        // FIXME: for debug. remove in release
-        inputArea.setText("3 3 1 2 3 4 5 6 7 8 9");
-
         geneticButton.addActionListener((e) -> geneticParamsPanel.setVisible(true));
         approxButton.addActionListener((e) -> geneticParamsPanel.setVisible(false));
         bruteButton.addActionListener((e) -> geneticParamsPanel.setVisible(false));
