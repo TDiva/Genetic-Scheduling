@@ -100,6 +100,10 @@ public class ImageManager {
     }
 
     public static ImageIcon getImage(Schedule schedule) {
+        return new ImageIcon(getBufferedImage(schedule));
+    }
+
+    public static BufferedImage getBufferedImage(Schedule schedule) {
         BufferedImage img = new BufferedImage(WIDTH + 2 * MARGIN, HEIGHT + 2 * MARGIN, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) img.getGraphics();
 
@@ -109,7 +113,7 @@ public class ImageManager {
 
         if (schedule == null) {
             drawAxes(g, 1, 1);
-            return new ImageIcon(img);
+            return img;
         }
 
         double xCoeff = ((double) (WIDTH)) / schedule.getTime();
@@ -129,7 +133,7 @@ public class ImageManager {
             });
         }
 
-        return new ImageIcon(img);
+        return img;
     }
 
 }

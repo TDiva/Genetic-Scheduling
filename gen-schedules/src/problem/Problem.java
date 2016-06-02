@@ -81,7 +81,7 @@ public class Problem {
                 op[i][j] = sc.nextInt();
             }
         }
-        return new Problem(jobs, machines, op);
+        return new Problem(machines, jobs, op);
     }
 
 }

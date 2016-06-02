@@ -12,10 +12,13 @@ import algorithm.genetic.core.selection.SelectionManager;
 import problem.Problem;
 import problem.Schedule;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.Scanner;
 
 public class Application extends JFrame {
@@ -39,6 +42,10 @@ public class Application extends JFrame {
     protected JPanel geneticParamsPanel = new JPanel();
 
     protected JTextArea infoArea = new JTextArea();
+
+    protected Schedule curSolution;
+
+    protected int bruteLimitOnOperations = 10;
 
     public Application() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -147,8 +154,10 @@ public class Application extends JFrame {
         solutionMenu.add(saveSolText);
         solutionMenu.add(saveSolIng);
 
-        Menu settings = new Menu("Settings");
-        mainMenu.add(settings);
+        MenuItem settings = new MenuItem("Brute limit");
+        Menu m = new Menu("Settings");
+        m.add(settings);
+        mainMenu.add(m);
 
         setMenuBar(mainMenu);
 
@@ -162,6 +171,115 @@ public class Application extends JFrame {
         approxButton.addActionListener((e) -> geneticParamsPanel.setVisible(false));
         bruteButton.addActionListener((e) -> geneticParamsPanel.setVisible(false));
 
+        loadPr.addActionListener((e) -> {
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Text file", "txt");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showOpenDialog(this);
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                File f = chooser.getSelectedFile();
+                StringBuffer sb = new StringBuffer();
+                try (Scanner sc = new Scanner(f)) {
+                    while (sc.hasNextLine()) {
+                        sb.append(sc.nextLine());
+                        sb.append("\n");
+                    }
+                    inputArea.setText(sb.toString());
+                } catch (FileNotFoundException ex) {
+                    clearInfoArea();
+                    addInfo("File " + f.getName() + " not found");
+                }
+            }
+        });
+
+        savePr.addActionListener((e) -> {
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Text file", "txt");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showSaveDialog(this);
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                File f = chooser.getSelectedFile();
+                f = setExtension(f, "txt");
+                StringBuffer sb = new StringBuffer();
+                try (PrintWriter sc = new PrintWriter(f)) {
+                    sc.write(inputArea.getText());
+                } catch (FileNotFoundException ex) {
+                    clearInfoArea();
+                    addInfo("File " + f.getName() + " not found");
+                }
+            }
+        });
+
+        saveSolText.addActionListener((e) -> {
+            if (curSolution == null) {
+                clearInfoArea();
+                addInfo("No solution was found");
+                return;
+            }
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Text file", "txt");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showSaveDialog(this);
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                File f = chooser.getSelectedFile();
+                f = setExtension(f, "txt");
+                StringBuffer sb = new StringBuffer();
+                try (PrintWriter sc = new PrintWriter(f)) {
+                    sc.write(curSolution.toString());
+                } catch (FileNotFoundException ex) {
+                    clearInfoArea();
+                    addInfo("File " + f.getName() + " not found");
+                }
+            }
+        });
+
+        saveSolIng.addActionListener((e) -> {
+            if (curSolution == null) {
+                clearInfoArea();
+                addInfo("No solution was found");
+                return;
+            }
+            JFileChooser chooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "Image JPG", "jpg");
+            chooser.setFileFilter(filter);
+            int returnVal = chooser.showSaveDialog(this);
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                File f = chooser.getSelectedFile();
+                f = setExtension(f, "jpg");
+                StringBuffer sb = new StringBuffer();
+                try (FileOutputStream sc = new FileOutputStream(f)) {
+                    ImageIO.write(ImageManager.getBufferedImage(curSolution), "jpg", sc);
+                } catch (FileNotFoundException ex) {
+                    clearInfoArea();
+                    addInfo("File " + f.getName() + " not found");
+                } catch (IOException e1) {
+                    clearInfoArea();
+                    addInfo("Error while saving image: " + e1.getMessage());
+                }
+            }
+        });
+
+        settings.addActionListener((e) -> {
+            String limit =  JOptionPane.showInputDialog(
+                    this,
+                    "Brute algorithm limit on operations:",
+                    String.valueOf(bruteLimitOnOperations));
+            if (limit != null) {
+                bruteLimitOnOperations = Integer.valueOf(limit);
+            }
+        });
+    }
+
+    protected File setExtension(File f, String ext) {
+        if (f.getName().endsWith("." + ext)) {
+            return f;
+        }
+        String newName = f.getAbsolutePath() + "." + ext;
+        return new File(newName);
     }
 
     protected void clearInfoArea() {
@@ -176,8 +294,6 @@ public class Application extends JFrame {
         infoArea.setText(text + s);
     }
 
-    public static final int MAX_BRUTE = 10;
-
     public class ApplyButtonListener implements ActionListener {
 
         @Override
@@ -191,8 +307,8 @@ public class Application extends JFrame {
             Solver solver = null;
             if (bruteButton.isSelected()) {
                 addInfo("Brute algorithm:");
-                if (problem.getNumberOfMachines() * problem.getNumberOfJobs() > MAX_BRUTE) {
-                    addInfo("Cannot proceed: \nnumber of operations exceed max = " + MAX_BRUTE);
+                if (problem.getNumberOfMachines() * problem.getNumberOfJobs() > bruteLimitOnOperations) {
+                    addInfo("Cannot proceed: \nnumber of operations exceed max = " + bruteLimitOnOperations);
                     addInfo("Solution will take too much time. \nTry approximate of genetic algorithm");
                     return;
                 }
@@ -237,13 +353,16 @@ public class Application extends JFrame {
             }
 
             if (solver != null) {
-                Schedule schedule = solver.generateSchedule();
-                img.setIcon(ImageManager.getImage(schedule));
-                addInfo(schedule.toString());
-                addInfo("Quality:" + ((double) schedule.getTime()) / problem.getLowerBorderOfSolution());
+                curSolution = solver.generateSchedule();
+                img.setIcon(ImageManager.getImage(curSolution));
+                addInfo(curSolution.toString());
+                addInfo("Quality:" + ((double) curSolution.getTime()) / problem.getLowerBorderOfSolution());
             }
         }
+
+
     }
+
 
     public static void main(String[] args) {
         Application app = new Application();
